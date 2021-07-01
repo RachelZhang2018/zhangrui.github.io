@@ -20,7 +20,7 @@ Instance segmentation highlight **individual instances** of a class differently.
 
 # Object Localization
 
-It is a regression problem, output $(x,y,w,h)$ of the bounding box of the object in a digital image.
+It is a regression problem, output $$(x,y,w,h)$$ of the bounding box of the object in a digital image.
 
 **Loss Function**: Usually, L2 norm (MSE, **Mean Squared Error**) is applied.
 
@@ -28,29 +28,31 @@ It is a regression problem, output $(x,y,w,h)$ of the bounding box of the object
 
 - See [this tutorial](https://medium.com/@jonathan_hui/map-mean-average-precision-for-object-detection-45c121a31173).
 
-
-![cad6c5d930b92bb7047fa1d11fd39c5c.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y879s5j30m5082q3a.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y879s5j30m5082q3a.jpg" alt="cad6c5d930b92bb7047fa1d11fd39c5c.png" style="zoom:50%;" />
 
 
 - IoU, Intersection over Union
 
-![ef5fb7406b321eea409bb1a373eb525f.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yb50tbj30n006t3yj.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19yb50tbj30n006t3yj.jpg" alt="ef5fb7406b321eea409bb1a373eb525f.png" style="zoom:50%;" />
 
-$$TP (Ture\; Positive) = IoU > 0.5 (threshold)$$
-$$Precision = \frac{TP}{TP+FP}$$
-$$Recall = \frac{TP}{TP+FN}$$
-$$AP = \int_0^1 PR-curve\; dR$$ 
-$$mAP = average\; AP\; over\;classes$$
+\\[
 
+$$TP (Ture\; Positive) = IoU > 0.5 (threshold)$$\\
+$$Precision = \frac{TP}{TP+FP}$$\\
+$$Recall = \frac{TP}{TP+FN}$$\\
+$$AP = \int_0^1 PR-curve\; dR$$\\ 
+$$mAP = average\; AP\; over\;classes$$\\
 
-![a13df0ac75eb1fbd286b090ffd8ba873.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y794w9j30nw0awdg7.jpg)
+\\]
+
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y794w9j30nw0awdg7.jpg" alt="a13df0ac75eb1fbd286b090ffd8ba873.png" style="zoom:50%;" />
 
 
 
 **Regression Head**
 Head: Set of fully-connected layers.
 
-![3a17f1012c79db844f34bc5a344640c9.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y9612wj30zw0evwk9.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y9612wj30zw0evwk9.jpg" alt="3a17f1012c79db844f34bc5a344640c9.png" style="zoom: 50%;" />
 
 ***
 
@@ -64,17 +66,17 @@ Head: Set of fully-connected layers.
 
 Slide a window over the image and use a standard CNN classifier (like AlexNet) for each window position. It is very slow!
 
-****Efficient Sliding Window****
+**Efficient Sliding Window**
 Convert fully connected layers to convolutional layers. See [the Stanford note](http://cs231n.github.io/convolutional-networks/#convert).
-When the input is a larger image, say $384\times 384$ (original $224\times 224$), using convolutional layers saves a lot of computation. 
+When the input is a larger image, say $$384\times 384$$ (original $$224\times 224$$), using convolutional layers saves a lot of computation. 
 
 **Converted ConvNet:**
 
-$224$: We get a $7\times 7$ feature map before FC layers.
-$384$: We get a $12\times 12$ feature map.
+$$224$$: We get a $$7\times 7$$ feature map before FC layers.
+$$384$$: We get a $$12\times 12$$ feature map.
 
-$224$: Output size 1x1x1000.
-$384$: Output size 6x6x1000.
+$$224$$: Output size 1x1x1000.
+$$384$$: Output size 6x6x1000.
 
 For the final score, we simply average the scores of each class. Only one pass is needed for larger images.
 
@@ -84,7 +86,7 @@ For the final score, we simply average the scores of each class. Only one pass i
 
 We need 6x6=36 passes.
 
-****Varying Scales and Aspect Ratios****
+**Varying Scales and Aspect Ratios**
 
 Without localization, if the window size is fixed, we can only detect objects of fixed size, and windows are square, but not all objects are square. One solution is to run sliding window with different window sizes.
 
@@ -96,11 +98,11 @@ Without localization, if the window size is fixed, we can only detect objects of
 
 **Merge** bounding boxes and scores greedily by NMS (**Non-Maximum Supression**). Go down the list of detections starting from highest scoring. Eliminate any detection that overlaps highly with a higher scoring detection.
 
-$\color{red}\text{Why is it possible to predict BB out of the range of the sliding window?}$
+<span style="color:red">Why is it possible to predict BB out of the range of the sliding window?</span>
 Guess: The ground truth is the bounding box in the larger image, so we can still predict the bounding box in the larger image based on the given cropped region (window).
-$\color{red}\text{Why we need sliding window in different scales and aspect ratios?}$
+<span style="color:red">Why we need sliding window in different scales and aspect ratios?</span>
 Guess: Because a too large sliding window may crop multiple objects, then we cannot distinguish them. Sliding window with different aspect ratio may help in finding multiple shape objects (get a better BB prediction).
-$\color{red}\text{How to distinguish bounding boxes from different objects in the same class?}$
+<span style="color:red">How to distinguish bounding boxes from different objects in the same class?</span>
 Non-maximum supression. Bounding boxes of different objects have little possibility to overlap.
 
 ## Region Proposals
@@ -115,14 +117,13 @@ It is kind of cluster-based image segmentation (groups similar pixels together).
 
 ## R-CNN
 
-****Architecture****
+**Architecture**
 
 ![a832658878e65d84f69a09787c624dcf.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y8pkirj30ie0cin1y.jpg)
 
 ![223b48f4e713a07205ff7de5b605b5b1.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yaad2vj314v0cgtdl.jpg)
 
-
-****Problems:****
+**Problems:**
 
 1. **Slow at test-time:** need to run full forward pass of CNN for each of 2000 region proposals (takes around 47 seconds for each test image).
 2. **SVMs and regressors are post-hoc:** CNN features not updated/trained in response to SVMs and regressors.
@@ -131,7 +132,7 @@ It is kind of cluster-based image segmentation (groups similar pixels together).
 
 ## Fast R-CNN
 
-****Architecture****
+**Architecture**
 
 ![0702abc3ef140773aaa58622e7cf2c21.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y6sgvkj30hh0fdtcx.jpg)
 
@@ -147,7 +148,7 @@ For solving R-CNN problems:
 
 5. **RoI Pooling**. Fully-connected layer expects fixed input shape. So, we do **max pooling** of each proposals to get an expected input shape. RoI pooling is based on the whole feature map taking region proposals as reference.
 
-****Problem****
+**Problem**
 **Region proposals become bottlenecks** in Fast R-CNN algorithm affecting its performance.
 
 ## Faster R-CNN
@@ -159,7 +160,7 @@ Solution: Make the CNN do region proposals.
 
 ![97733068e27d741c529b2d2255766c53.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y7r4r0j31580e2q5l.jpg)
 
-- Use $n$ anchors at each location. Those anchors are translation invariant.
+- Use $$n$$ anchors at each location. Those anchors are translation invariant.
 
 ## YOLO: You Only Look Once (One-Stage Object Detection)
 
@@ -191,7 +192,7 @@ Conventional CNN has fixed input shape and output shape (class scores), whereas 
 
 1x1 convolution layers output a spatial map / heatmap. But we need the output to be the same shape as the input image, so we need **upsampling**.
 
-****Upsampling****
+**Upsampling**
 **No Parameter:**
 ![9fc31e2345b1fee70fca303b93496e3c.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yddpdyj30no0entbj.jpg)
 
@@ -200,7 +201,7 @@ Transpose convolution takes a single value from the low-resolution feature map a
 
 However, the upsampling module (decoder) struggles to produce **fine-grained** segmentations.
 
-****Skip Layers****
+**Skip Layers**
 
 **Semantic:** global information from late layers resolves ***what***.
 **Location:** local information from early layers resolves ***where***.
