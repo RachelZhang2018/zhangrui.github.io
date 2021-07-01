@@ -20,7 +20,7 @@ Instance segmentation highlight **individual instances** of a class differently.
 
 # Object Localization
 
-It is a regression problem, output $$(x,y,w,h)$$ of the bounding box of the object in a digital image.
+It is a regression problem, output $(x,y,w,h)$ of the bounding box of the object in a digital image.
 
 **Loss Function**: Usually, L2 norm (MSE, **Mean Squared Error**) is applied.
 
@@ -35,15 +35,11 @@ It is a regression problem, output $$(x,y,w,h)$$ of the bounding box of the obje
 
 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19yb50tbj30n006t3yj.jpg" alt="ef5fb7406b321eea409bb1a373eb525f.png" style="zoom:50%;" />
 
-\\[
-
 $$TP (Ture\; Positive) = IoU > 0.5 (threshold)$$\\
 $$Precision = \frac{TP}{TP+FP}$$\\
 $$Recall = \frac{TP}{TP+FN}$$\\
 $$AP = \int_0^1 PR-curve\; dR$$\\ 
-$$mAP = average\; AP\; over\;classes$$\\
-
-\\]
+$$mAP = average\; AP\; over\;classes$$
 
 <img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y794w9j30nw0awdg7.jpg" alt="a13df0ac75eb1fbd286b090ffd8ba873.png" style="zoom:50%;" />
 
@@ -52,7 +48,7 @@ $$mAP = average\; AP\; over\;classes$$\\
 **Regression Head**
 Head: Set of fully-connected layers.
 
-<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y9612wj30zw0evwk9.jpg" alt="3a17f1012c79db844f34bc5a344640c9.png" style="zoom: 50%;" />
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y9612wj30zw0evwk9.jpg" alt="3a17f1012c79db844f34bc5a344640c9.png" style="zoom:50%;" />
 
 ***
 
@@ -68,15 +64,15 @@ Slide a window over the image and use a standard CNN classifier (like AlexNet) f
 
 **Efficient Sliding Window**
 Convert fully connected layers to convolutional layers. See [the Stanford note](http://cs231n.github.io/convolutional-networks/#convert).
-When the input is a larger image, say $$384\times 384$$ (original $$224\times 224$$), using convolutional layers saves a lot of computation. 
+When the input is a larger image, say $384\times 384$ (original $224\times 224$), using convolutional layers saves a lot of computation. 
 
 **Converted ConvNet:**
 
-$$224$$: We get a $$7\times 7$$ feature map before FC layers.
-$$384$$: We get a $$12\times 12$$ feature map.
+$224$: We get a $7\times 7$ feature map before FC layers.
+$384$: We get a $12\times 12$ feature map.
 
-$$224$$: Output size 1x1x1000.
-$$384$$: Output size 6x6x1000.
+$224$: Output size 1x1x1000.
+$384$: Output size 6x6x1000.
 
 For the final score, we simply average the scores of each class. Only one pass is needed for larger images.
 
@@ -119,7 +115,7 @@ It is kind of cluster-based image segmentation (groups similar pixels together).
 
 **Architecture**
 
-![a832658878e65d84f69a09787c624dcf.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y8pkirj30ie0cin1y.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y8pkirj30ie0cin1y.jpg" alt="a832658878e65d84f69a09787c624dcf.png" style="zoom: 67%;" />
 
 ![223b48f4e713a07205ff7de5b605b5b1.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yaad2vj314v0cgtdl.jpg)
 
@@ -134,7 +130,7 @@ It is kind of cluster-based image segmentation (groups similar pixels together).
 
 **Architecture**
 
-![0702abc3ef140773aaa58622e7cf2c21.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y6sgvkj30hh0fdtcx.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19y6sgvkj30hh0fdtcx.jpg" alt="0702abc3ef140773aaa58622e7cf2c21.png" style="zoom: 67%;" />
 
 
 ![5bdf16ef3ec0dc49e8a6cb38b7fa4792.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yc45l9j314x0dp777.jpg)
@@ -155,12 +151,12 @@ For solving R-CNN problems:
 
 Solution: Make the CNN do region proposals.
 
-![add2e3c511535567ef5b2180792d3493.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yd0ybsj30nv0fo443.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19yd0ybsj30nv0fo443.jpg" alt="add2e3c511535567ef5b2180792d3493.png" style="zoom:67%;" />
 
 
 ![97733068e27d741c529b2d2255766c53.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19y7r4r0j31580e2q5l.jpg)
 
-- Use $$n$$ anchors at each location. Those anchors are translation invariant.
+- Use $n$ anchors at each location. Those anchors are translation invariant.
 
 ## YOLO: You Only Look Once (One-Stage Object Detection)
 
@@ -182,7 +178,7 @@ Semantic segmentation **labels each pixel** in the image with a category label w
 
 We create our target by one-hot encoding the class labels - essentially **creating an output channel for each of the possible classes**. Each pixel is labeled with its most possible class.
 
-![ad7f3dbe0adb86b37e01d7545bf9ab7a.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19ycfkz5j30ui0dc0yp.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19ycfkz5j30ui0dc0yp.jpg" alt="ad7f3dbe0adb86b37e01d7545bf9ab7a.png" style="zoom:67%;" />
 
 ## FCN (Fully Convolutional Network)
 
@@ -194,7 +190,7 @@ Conventional CNN has fixed input shape and output shape (class scores), whereas 
 
 **Upsampling**
 **No Parameter:**
-![9fc31e2345b1fee70fca303b93496e3c.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19yddpdyj30no0entbj.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19yddpdyj30no0entbj.jpg" alt="9fc31e2345b1fee70fca303b93496e3c.png" style="zoom:50%;" />
 
 **Learnable Parameter + Filters: Transpose Convolution**
 Transpose convolution takes a single value from the low-resolution feature map and multiply all of the weights in our filter by this value, projecting those weighted values into the output feature map.
@@ -208,8 +204,7 @@ However, the upsampling module (decoder) struggles to produce **fine-grained** s
 
 So, we need combine fine layers and coarse layers.
 
-
-![18e062c4c0b78e5ed248780a4b54d8ac.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19ydtinkj30zj0fgq98.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19ydtinkj30zj0fgq98.jpg" alt="18e062c4c0b78e5ed248780a4b54d8ac.png" style="zoom: 50%;" />
 
 We extract layers from different stages, then upsampling them to have the same size and combine them.
 
@@ -219,8 +214,7 @@ U-Net improves upon the FCN architecture primarily through **expanding the capac
 
 The U-Net architecture consists of a contracting path to capture context and a symmetric expanding path that enables precise localization.
 
-
-![6771df62c77eb60ce89f51559f6a987b.png](https://tva1.sinaimg.cn/large/008i3skNly1gs19ybhrcuj30dy09u0sr.jpg)
+<img src="https://tva1.sinaimg.cn/large/008i3skNly1gs19ybhrcuj30dy09u0sr.jpg" alt="6771df62c77eb60ce89f51559f6a987b.png" style="zoom:50%;" />
 
 ***
 
