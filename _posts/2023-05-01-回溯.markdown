@@ -1,0 +1,71 @@
+# 数组
+
+给定一个任意长度的数组，找出其中和为24的所有组合。
+
+ 例如：给定[24,0,12,12]，返回[[24],[24,0],[12,12],[12,12,0]]
+
+~~~python
+from copy import copy
+
+def find_combinations(nums, target):
+	result = []
+	def backtrack(start, current_combination, remaining):
+		if remaining == 0:
+			result.append(copy(current_combination))
+			return
+		if remaining < 0:
+			return
+		for i in range(start, len(nums)):
+			current_combination.append(nums[i])
+			backtrack(i+1, current_combination, remaining-nums[i])
+			current_combination.pop()
+
+	backtrack(0, [], target)
+	return result
+
+nums = [0, 0, 24, 12, 12]
+target = 24
+
+print(find_combinations(nums, target))
+# [[0, 0, 24], [0, 0, 12, 12], [0, 24], [0, 12, 12], [0, 24], [0, 12, 12], [24], [12, 12]]
+~~~
+
+这里面有一个0的问题，如果把数组重新排列，把所有的0放在数组最前面，就可以解决问题。
+
+# 二叉树
+
+剑指 Offer 34. 二叉树中和为某一值的路径
+
+找出所有**从根节点到叶子节点**路径综合等于target的路径。
+
+⚠️ 叶子节点指**没有任何子节点**的节点。这也是有效路径的判断条件。
+
+使用深度优先搜索遍历每条路径，判断路径有效的条件是当前节点是根节点，且加入后残差为0。
+
+~~~python
+class Solution:
+    from copy import copy
+    def dfs(self, node, remaining, path, paths):
+        if not node: 
+            return
+        path.append(node.val)
+        remaining -= node.val
+        if not node.left and not node.right and remaining == 0:
+            paths.append(copy.copy(path))
+        self.dfs(node.left, remaining, path, paths)
+        self.dfs(node.right, remaining, path, paths)
+        path.pop()
+
+    def pathSum(self, root: TreeNode, target: int) -> List[List[int]]:
+        paths = []
+        self.dfs(root, target, [], paths)
+        return paths
+~~~
+
+时间复杂度：$O(N^2)$
+N 是树的节点数。在最坏情况下，树的上半部分为链状，下半部分为完全二叉树，并且从根节点到每一个叶子节点的路径都符合题目要求。此时，路径的数目为 $O(N)$，并且每一条路径的节点个数也为 $O(N)$，因此要将这些路径全部添加进答案中，时间复杂度为 $O(N)$。
+
+空间复杂度：$O(N)$
+
+N 是树的节点数。空间复杂度主要取决于栈空间的开销，栈中的元素个数不会超过树的节点数。
+
