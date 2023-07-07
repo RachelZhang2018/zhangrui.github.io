@@ -1,0 +1,47 @@
+---
+
+layout: post
+
+title: "Leetcode-优先级队列和堆heapq"
+
+---
+
+https://zhuanlan.zhihu.com/p/335322846
+
+https://www.geeksforgeeks.org/priority-queue-using-binary-heap/
+
+https://www.geeksforgeeks.org/heap-queue-or-heapq-in-python/
+
+# TopK问题
+
+## 692.前k个高频单词(中等)
+
+~~~python
+class Word():
+    def __init__(self, word, count):
+        self.word = word 
+        self.count = count
+
+    def __lt__(self, other):
+        if self.count == other.count:
+            return self.word > other.word
+        else:
+            return self.count < other.count
+from collections import Counter
+class Solution:
+    def topKFrequent(self, words: List[str], k: int) -> List[str]:
+        counter = Counter(words)
+        pq = []
+        for i in counter:
+            heapq.heappush(pq, Word(i, counter[i]))
+            if len(pq) > k:
+                heapq.heappop(pq)
+        pq.sort(reverse=True)
+        return [i.word for i in pq]
+~~~
+
+1. 使用 `Counter` 进行计数。
+2. 计数结果push入小顶堆，需override `__lt__` 方法，不仅按照计数比较，还要按照字典序比较两个单词。
+3. 如果小顶堆的长度超过 $k$，则从堆中pop一个元素。
+4. 最后剩下的k个元素逆序排序。
+

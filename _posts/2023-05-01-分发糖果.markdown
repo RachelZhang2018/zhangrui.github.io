@@ -1,0 +1,49 @@
+---
+
+layout: post
+
+title: "Leetcode-分发糖果"
+
+---
+
+# 题目
+
+<img src="./typora-user-images/image-20230309212746480.png" alt="image-20230309212746480" style="zoom: 67%;" />
+
+# 两次遍历
+
+理解成上下台阶，但凡是增序列，一次上一个台阶；但凡是减序列，一次下一个台阶。
+从左往右遍历，只关注增序列，ratings=[3,6,9,11]，就是上台阶1,2,3,4，下台阶先不管；
+在看从右往左遍历，也是只关注增序列（等同于从左往右的减序列），ratings=[5,4,2,0]，就是下台阶的4,3,2,1。
+问题是，当从左走到右，先上后下，比如说ratings=[0,1,2,3,5,4,3,2,1,0]，发现需要上5个台阶，但是需要下6个台阶；从左往右遍历到数字5的时候，台阶是5，但是下台阶不够下了，所以要取最大值6。取这个最大值不会影响从左往右上台阶，只是给递减序列增加足够的台阶数。
+
+==哪种序列长，哪个决定顶点数值==
+
+# 一次遍历
+
+第二种方法，增序列的操作和第一种方法的从左往右遍历的原理完全一样，不同的是第一种方法中的从右往左遍历融合到了减序列的操作。假如说上台阶上到5了，下台阶序列长度是1（不包括最高点），那就再+1；假如说下台阶长度是2（不包括最高点），那就再+2（将2分配给减序列的每一个数）；但是如果下台阶数超过5（不包括最高点），那么台阶就不够下了，就有个额外增加1的操作（给最高点+1），等同于第一种方法的取最值。
+
+# 对比图
+
+<img src="./typora-user-images/image-20230306234035819.png"/>
+
+# 代码
+
+~~~python
+def candy(self, ratings: List[int]) -> int:
+    length = len(ratings)
+    left = [1 for _ in range(length)]
+    right = 1
+    count = 0
+    for i in range(length):
+        if i > 0 and ratings[i] > ratings[i-1]:
+            left[i] = left[i-1] + 1
+    for i in range(length-1, -1, -1):
+        if i < length-1 and ratings[i] > ratings[i+1]:
+            right += 1
+        else:
+            right = 1
+        count += max(left[i], right)
+    return count
+~~~
+

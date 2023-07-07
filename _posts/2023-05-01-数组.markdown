@@ -1,0 +1,48 @@
+---
+
+layout: post
+
+title: "Leetcode-数组"
+
+---
+
+## 915.分割数组
+
+<img src="./typora-user-images/image-20230605224715166.png" alt="image-20230605224715166" style="zoom:50%;" />
+
+思路：
+
+|             | 0    | 1    | 2    | 3    | 4    | 5       | 6    | 7    | 8    | 9    |
+| ----------- | ---- | ---- | ---- | ---- | ---- | ------- | ---- | ---- | ---- | ---- |
+| nums        | 24   | 11   | 49   | 80   | 63   | 8       | 61   | 22   | 73   | 85   |
+| left_max    |      | 24   | 24   | 24   | 24   | **80**  | 80   | 80   | 80   | 80   |
+| total_max   |      | 24   | 49   | 80   | 80   | 80      | 80   | 80   | 80   | 85   |
+| left_length |      | 2+1  | 2+1  | 2+1  | 2+1  | **5**+1 | 6+1  | 7+1  | 8+1  | 8+1  |
+
+维护 `left_max` 为左子数组最大值，`total_max` 为全数组最大值。
+
+当前值大于等于 `left_max` 的时候只需要更新 `total_max`；
+
+当前值小于 `left_max` 的时候，需要让 `left_max=total_max`，然后left的长度就是当前索引值➕1。
+
+~~~python
+class Solution:
+    def partitionDisjoint(self, nums: List[int]) -> int:
+        # init
+        if nums[0] <= nums[1]:
+            left = 1
+            total_max = nums[1]
+        else:
+            left = 2
+            total_max = nums[0]
+        left_max = nums[0]
+        # traverse once
+        for i in range(2, len(nums)):
+            if nums[i] >= left_max:
+                total_max = max(total_max, nums[i])
+            else:
+                left_max = total_max
+                left = i + 1
+        return left
+~~~
+

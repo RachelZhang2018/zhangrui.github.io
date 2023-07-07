@@ -1,0 +1,335 @@
+---
+
+layout: post
+
+title: "Leetcode-字符串"
+
+---
+
+# 1419.数青蛙
+
+<img src="./typora-user-images/image-20230506223223518.png" alt="image-20230506223223518" style="zoom:50%;" />
+
+<img src="./typora-user-images/minFrogNumber.jpeg"/>
+
+保存一个5个计数器，每次递增当前字母的计数，递减上个字母的计数。
+
+但是如果上个字母的计数已经是0，且上个字母不是k，则证明当前字母是从一个非c的字母开始的，字符串不符合要求。
+
+最后除了k以外，每个字母的计数都必须为0。
+
+~~~python
+class Solution:
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        count_dict = {
+            'c': {'pre': 'k', 'cnt': 0},
+            'r': {'pre': 'c', 'cnt': 0},
+            'o': {'pre': 'r', 'cnt': 0},
+            'a': {'pre': 'o', 'cnt': 0},
+            'k': {'pre': 'a', 'cnt': 0}
+        }
+        for ch in croakOfFrogs:
+            if ch not in count_dict:
+                return -1
+            else:
+                pre = count_dict[ch]['pre']
+                if count_dict[pre]['cnt']:
+                    count_dict[pre]['cnt'] -= 1
+                elif ch != 'c':
+                    return -1
+                count_dict[ch]['cnt'] += 1
+        for key in count_dict:
+            if key == 'k':
+                continue
+            if count_dict[key]['cnt'] != 0:
+                return -1
+        return count_dict['k']['cnt']
+~~~
+
+# 32.最长有效括号
+
+输入：s = "())((())"
+
+输出：4
+
+解释：最长有效括号序列是"(())"
+
+<img src="./typora-user-images/image-20230531002104468.png"/>
+
+从左往右遍历时，重点是==当right>left时，我们将二者同时变为0==。
+
+|         | (    | )    | (    | (    | (    | )    | )    |
+| ------- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| ➡️left   | 1    | 1    | 2    | 3    | 4    | 4    | 4    |
+| ➡️right  | 0    | 1    | 1    | 1    | 1    | 2    | 3    |
+| ➡️maxlen | 0    | 2    | 2    | 2    | 2    | 2    | 2    |
+| ⬅️left   | 1    | 0    | 3->0 | 2    | 1    | 0    | 0    |
+| ⬅️right  | 1    | 1    | 2->0 | 2    | 2    | 2    | 1    |
+| ⬅️maxlen | 4    | 4    | 4    | 4    | 0    | 0    | 0    |
+
+
+
+# 5.最长回文子串
+
+中心扩展 $O(n^2)$
+
+~~~python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        # 中心扩展
+				# modify "aba" to "#a#b#a#"
+        new_str = '#'
+        for item in s:
+            new_str += item + '#'
+        max_len = 0
+        max_seq = ''
+        for i in range(len(new_str)):
+            radius = 1
+            while i-radius>=0 and i+radius<=len(new_str)-1:
+                if new_str[i-radius] != new_str[i+radius]:
+                    break
+                radius += 1
+            cur_len = radius - 1
+            if cur_len > max_len:
+                max_len = cur_len
+                max_seq = new_str[i-radius+1:i+radius]
+        max_seq = ''.join(max_seq.split('#'))
+        return max_seq
+
+~~~
+
+DP $O(n^2)$
+
+~~~python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        # DP
+        n = len(s)
+        dp = [[0]*n for _ in range(n)]
+        max_seq = s[0:1]
+        max_len = 1
+        for i in range(n):
+            dp[i][i] = 1
+        for j in range(1,n):
+            dp[j-1][j] = (s[j-1]==s[j])
+            if dp[j-1][j] and max_len < 2:
+                max_len = 2
+                max_seq = s[j-1:j+1]
+            for i in range(j-1):
+                dp[i][j] = (dp[i+1][j-1] and s[i]==s[j])
+                cur_len = j-i+1
+                if dp[i][j] and max_len < cur_len:
+                    max_len = cur_len
+                    max_seq = s[i:j+1]
+        return max_seq
+~~~
+
+| DP    |      | b     | a     | b     | a     | d     |
+| ----- | ---- | ----- | ----- | ----- | ----- | ----- |
+|       | i\j  | 0     | 1     | 2     | 3     | 4     |
+| **b** | 0    | **1** | **0** | **1** | **0** | **0** |
+| **a** | 1    | 0     | **1** | **0** | **1** | **0** |
+| **b** | 2    | 0     | 0     | **1** | **0** | **0** |
+| **a** | 3    | 0     | 0     | 0     | **1** | **0** |
+| **d** | 4    | 0     | 0     | 0     | 0     | **1** |
+
+$DP[i][j] = DP[i-1][j-1] \wedge s[i]==s[j]$
+
+特殊条件：
+
+$DP[i][i] = 1$
+
+$DP[i][j]=s[i]==s[j]$ if $i+1==j$
+
+
+
+# 647 回文子串
+
+## 思路
+
+1. 枚举所有子串，判断是否是回文串；
+2. 枚举所有回文中心，两个指针向外扩展，不相等时停止扩展。
+
+3. 动态规划Manacher算法。
+
+## 分析
+
+1. 第一种方法：枚举所有子串用时 $O(n^2)$，检测一个字符串是否是回文串用时 $O(len(substring))$ 为线性时间。所以第一种方法用时 $O(n^3)$。
+2. 第二种方法：枚举回文中心是 $O(n)$，每一个回文中心向外扩展是 $O(n)$，整个算法耗时 $O(n^2)$。
+3. 动态规划Manacher算法：1975年提出，利用回文串的对称性将时间复杂度提升到了线性 $O(n)$。
+
+## 第二种方法
+
+扩展中心选择：
+
+`left = i, right = i`
+
+`left = i, right = i + 1`
+
+~~~python
+class Solution:
+
+    def countSubstrings_delta(self, s, left, right):
+        length = len(s)
+        count_delta = 0
+        while(left >= 0 and right < length):
+            if s[left] == s[right]:
+                count_delta += 1
+                left -= 1
+                right += 1
+            else:
+                break
+        return count_delta
+
+    def countSubstrings(self, s: str) -> int:
+        length = len(s)
+        count = 0
+        for i in range(length):
+            left = i
+            right = i 
+            count_delta = self.countSubstrings_delta(s, left, right)
+            right = i + 1
+            if right < length:
+                count_delta += self.countSubstrings_delta(s, left, right)
+            count += count_delta
+        return count
+~~~
+
+官方C++
+
+如何处理奇数、偶数的问题：
+
+~~~c++
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int n = s.size(), ans = 0;
+        for (int i = 0; i < 2 * n - 1; ++i) {
+            int l = i / 2, r = i / 2 + i % 2;
+            while (l >= 0 && r < n && s[l] == s[r]) {
+                --l;
+                ++r;
+                ++ans;
+            }
+        }
+        return ans;
+    }
+};
+~~~
+
+
+
+
+
+## 第一种方法超出时间限制
+
+$O(n^3)$
+
+~~~python
+class Solution:
+
+    def is_palindrome(self, s: str) -> bool:
+        length = len(s)
+        for i in range(length):
+            if s[i] != s[length-i-1]:
+                return False
+        return True
+
+    def countSubstrings(self, s: str) -> int:
+        length = len(s)
+        if length == 0:
+            return 0
+        count = 1
+        for i in range(1, length):
+            count_delta = 1
+            for j in range(i):
+                if self.is_palindrome(s[j:i+1]):
+                    count_delta += 1
+            count += count_delta
+
+        return count
+~~~
+
+
+
+## Manacher算法
+
+### 原理详解
+
+首先还是考虑遍历列表中的每一个元素，然后向外扩展，但是扩展这个过程其实是可以简化的，假设元素 $i$ 之后有一个元素 $j$，而元素 $j$ 被包含在以元素 $i$ 为中心的最大回文串之内，那么元素 $j$ 在这个包裹之内的扩展就不必再进行，因为是已知的。
+
+**Step 1 重构原字符串**
+
+在原字符串 $s$ 的每两个字符之间以及头尾加上标志字符'#'，再在头尾加上不同的标志字符'^'和'$'作为循环结束的条件。这样重构以后的字符串的长度一定是奇数。
+
+<img src="./typora-user-images/v2-d570f7a9e732d577d556b0e6cff1d263_720w.jpg"/>
+
+重构以后的字符串 $s'$ 有一个规律，以一个字符为中心扩展的最大回文串的半径就是原字符串 $s$ 中回文串的长度。例如 $P[6]=5$，是字符串 $s'$ 中的"#c#b#c#b#c#"，对应原字符串 $s$ 的"cbcbc"，长度为 $5$。
+
+**Step 2 顺序求每个 $P[i]$**
+
+这一步是算法节省时间复杂度的关键，利用了回文串的对称性。需要保存一个扩展到的最右字符位置 $R_{max}$ 以及其对应的回文中心 $C_{max}$。
+
+假设目前遍历到 $P[6]=5$，更新 $R_{max}=11, C_{max}=6$。
+
+接下来在求 $P[i]$ 的时候，首先考虑它是不是在 $R_{max}$ 的包裹中，不是的话 ($i \ge R_{max}$) 从 $0$ 开始扩展；是的话首先求其关于 $C_{max}$ 的对称点 $P[i_{mirror}]$ ，显然 $i$ 和 $i_{mirror}$ 关于 $C_{max}$ 是对称的，然后分三种情况：
+
+1. 将 $P[i]$ 按照 $P[i_{mirror}]$ 的长度进行扩展，发现最右端已经超过 $R_{max}$，那么这时就不能直接赋值 $P[i] = P[i_{mirror}]$，最多只能赋值 $P[i] = R_{max}-i$，然后继续进行中心扩展。
+2. $P[i_{mirror}]$ 是因为遇到了左边界才停止的，这时使得 $P[i] = P[i_{mirror}]$，然后继续中心扩展。
+3. 如果不是上面两种情况，则直接赋值 $P[i] = P[i_{mirror}]$，无需再扩展。
+
+求出每个 $P[i]$ 以后，其贡献的回文子串个数就是 $(P[i]+1)/2$，例如 $P[6]=5$，其贡献的原字符串 $s$ 中的字符子串的个数为 $3$。
+
+**Step 3 保持 $R_{max}$ 和 $C_{max}$ 的更新**
+
+那么总的回文子串的数量就是从每个字符出发能扩展到的最大半径之和
+
+
+
+### Python算法
+
+~~~python
+def countSubstrings_manacher(s: str) -> int:
+	# reconstructure string
+	newstr = '^#'
+	for char in s:
+		newstr += char + '#'
+	newstr += '$'
+
+	# init
+	newlen = len(newstr)
+	P = [0] * newlen
+	R_max = 0
+	C_max = 0
+	count = 0
+
+	# update P[i] and R_max and C_max
+	for i in range(1, newlen-1):
+		if i < R_max:
+			i_mirror = 2 * C_max - i
+			P[i] = min(P[i_mirror], R_max - i) # include expand within R_max
+
+		# expand
+		left = i - P[i] - 1
+		right = i + P[i] + 1
+		while(newstr[left] == newstr[right]):
+			P[i] += 1
+			left -= 1
+			right += 1
+		if i + P[i] > R_max:
+			R_max = i + P[i]
+			C_max = i
+		count_delta = int((P[i] + 1) / 2)
+		count += count_delta
+
+	return count
+
+~~~
+
+
+
+### 时间复杂度分析
+
+虽然看似for循环中嵌套while循环，但其实我们每次都是从 $R_{max}$ 的右边开始扩展，而且 $R_{max}$ 只会增大不会缩小。
+
+一个字符最多被遍历两次，一次是被前面字符的扩展遍历（只有一次，因为一旦被 $R_{max}$ 的范围包裹，就不会再被遍历），一次是for循环轮到自己为中心扩展，所以时间复杂度是 $O(n)$ 。

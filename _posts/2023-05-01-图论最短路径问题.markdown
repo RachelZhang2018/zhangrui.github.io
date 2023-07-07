@@ -1,0 +1,314 @@
+---
+
+layout: post
+
+title: "Leetcode-图论最短路径问题"
+
+---
+
+标签：图论，最短路径，贪心算法，并查集
+
+# 最小生成树
+
+即最小权重生成树，一个有 n 个结点的[连通图](https://baike.baidu.com/item/连通图/6460995?fromModule=lemma_inlink)的生成树是原图的极小连通子图，且包含原图中的所有 n 个结点，且树中所有边的权重最小。
+
+## Kruskal's Algorithm
+
+使用**并查集**数据结构。
+
+1. 将所有边按照权重升序排列；
+2. 依次选择权重最小的边加入树中，同时保证无环，有环就丢弃；
+3. 直到树中有 $(V-1)$ 条边。
+
+~~~python
+class Graph:
+	def __init__(self, vertices):
+		self.V = vertices
+		self.E = 0
+		self.parent = [i for i in range(vertices)]
+		self.rank = [1] * vertices
+		self.graph = []
+		self.mst = []
+
+	def find(self, i):
+		if self.parent[i] == i:
+			return i 
+		result = self.find(self.parent[i])
+		self.parent[i] = result
+		return result
+
+	def union(self, w, u, v):
+		uroot = self.find(u)
+		vroot = self.find(v)
+		if uroot == vroot:
+			return
+		self.E += 1
+		self.mst.append((w,u,v))
+		if self.rank[uroot] < self.rank[vroot]:
+			self.parent[uroot] = vroot
+		elif self.rank[uroot] > self.rank[vroot]:
+			self.parent[vroot] = uroot
+		else:
+			self.parent[vroot] = uroot
+			self.rank[uroot] += 1
+
+	def insert_edge(self, edge):
+		self.graph.append(edge)
+
+	def printMST(self):
+		for edge in self.mst:
+			w, u, v = edge
+			print("(%d, %d<->%d)" % (w, u, v))
+
+	def kruskalMST(self):
+		sorted_edges = sorted(self.graph, key=lambda x: x[0])
+		for edge in sorted_edges:
+			w, u, v = edge
+			if self.E < self.V - 1:	
+				self.union(w, u, v)
+		self.printMST()
+
+if __name__=='__main__':
+	mygraph = Graph(4)
+	mygraph.insert_edge((10, 0, 1))
+	mygraph.insert_edge((6, 0, 2))
+	mygraph.insert_edge((5, 0, 3))
+	mygraph.insert_edge((15, 1, 3))
+	mygraph.insert_edge((4, 2, 3))
+	mygraph.kruskalMST()
+~~~
+
+
+
+**复杂度分析**：
+
+边排序的时间复杂度：$O(E\log E)$
+
+每添加一条边的并查集操作：$O(\log V)$
+
+总的时间：$O(E\log E+E\log V)$
+
+由于 $E$ 的值最大是 $O(V^2)$ ，所以 $O(\log V)$ 和 $O(\log E)$ 是一样的，所以总的时间复杂度是：
+
+==$O(E\log E)$ 或 $O(E\log V)$==
+
+空间复杂度：==$O(V+E)$==
+
+
+
+## Prim's Algorithm
+
+cut （图割）是图中连接两个顶点集合的边的集合。
+
+Prim's Algorithm就是在每一步中找到一个cut，选其中权重最小的边，将其顶点添加到MST中。
+
+<img src="./typora-user-images/PrimMST.jpg"/>
+
+维护一个key数组，长度为V，记录当前每个顶点与MST连接的边的最小权重；
+
+维护一个parent数组，长度为V，记录当前每个顶点的父节点。
+
+维护一个mstSet数组，记录当前MST中的节点。
+
+在每一次循环中，都要先找到cut中拥有最小权重的边的非MST的顶点 `u`，然后将其加入MST。
+
+~~~python
+# Prim's Minimum Spanning Tree (MST) algorithm.
+
+import sys
+
+class Graph():
+	def __init__(self, vertices):
+		self.V = vertices
+		self.graph = [[0 for column in range(vertices)]
+					for row in range(vertices)]
+
+	# A utility function to print
+	# the constructed MST stored in parent[]
+	def printMST(self, parent):
+		print("Edge \tWeight")
+		for i in range(1, self.V):
+			print(parent[i], "-", i, "\t", self.graph[i][parent[i]])
+
+	# A utility function to find the vertex with
+	# minimum distance value, from the set of vertices
+	# not yet included in shortest path tree
+	def minKey(self, key, mstSet):
+
+		# Initialize min value
+		min = sys.maxsize
+
+		for v in range(self.V):
+			if key[v] < min and mstSet[v] == False:
+				min = key[v]
+				min_index = v
+
+		return min_index
+
+	# Function to construct and print MST for a graph
+	# represented using adjacency matrix representation
+	def primMST(self):
+
+		# Key values used to pick minimum weight edge in cut
+		key = [sys.maxsize] * self.V
+		parent = [None] * self.V # Array to store constructed MST
+		# Make key 0 so that this vertex is picked as first vertex
+		key[0] = 0
+		mstSet = [False] * self.V
+
+		parent[0] = -1 # First node is always the root of
+
+		for cout in range(self.V):
+
+			# Pick the minimum distance vertex from
+			# the set of vertices not yet processed.
+			# u is always equal to src in first iteration
+			u = self.minKey(key, mstSet)
+
+			# Put the minimum distance vertex in
+			# the shortest path tree
+			mstSet[u] = True
+
+			# Update dist value of the adjacent vertices
+			# of the picked vertex only if the current
+			# distance is greater than new distance and
+			# the vertex in not in the shortest path tree
+			for v in range(self.V):
+
+				# graph[u][v] is non zero only for adjacent vertices of m
+				# mstSet[v] is false for vertices not yet included in MST
+				# Update the key only if graph[u][v] is smaller than key[v]
+				if self.graph[u][v] > 0 and mstSet[v] == False \
+				and key[v] > self.graph[u][v]:
+					key[v] = self.graph[u][v]
+					parent[v] = u
+
+		self.printMST(parent)
+
+
+# Driver's code
+if __name__ == '__main__':
+	g = Graph(5)
+	g.graph = [[0, 2, 0, 6, 0],
+			[2, 0, 3, 8, 5],
+			[0, 3, 0, 0, 7],
+			[6, 8, 0, 0, 9],
+			[0, 5, 7, 9, 0]]
+
+	g.primMST()
+
+
+# Contributed by Divyanshu Mehta
+
+~~~
+
+**复杂度分析**：
+
+时间复杂度：$O(V^2)$
+
+当使用二项堆或斐波那契堆时，时间复杂度降低为 $O(E\log V)$
+
+空间复杂度：$O(V)$
+
+
+
+**优点**：
+
+1. 保证在带权连通图中找到MST；
+2. 使用二项堆或斐波那契堆可以优化时间复杂度；
+3. 较好理解。
+
+**缺点**：
+
+1. 在稠密的图中比较慢；
+2. 优先队列需要额外的空间开销；
+3. 初始点的选择会影响MST的输出。
+
+
+
+# 最短带权路径
+
+## Dijkstra's Algorithm
+
+与Prim算法几乎一样，仅需要将key数组维护的一条边的权重改为路径和。
+
+~~~python
+import heapq
+
+class Graph:
+	def __init__(self, vertices):
+		self.V = vertices
+		self.dist = [float('inf')] * vertices
+		self.graph = {}
+		for v in range(vertices):
+			self.graph[v] = []
+
+	def insert_edge(self, w, u, v):
+		self.graph[u].append((w, v))
+		self.graph[v].append((w, u))
+
+	def shortest_path(self, src):
+		self.dist[src] = 0
+		pq = []
+		heapq.heappush(pq, (0, src))
+		while pq:
+			weight, u = heapq.heappop(pq)
+			for adj_weight, v in self.graph[u]:
+				if self.dist[v] > adj_weight + self.dist[u]:
+					self.dist[v] = adj_weight + self.dist[u]
+					heapq.heappush(pq, (self.dist[v], v))
+		print(self.dist)
+
+if __name__=='__main__':
+	g = Graph(9)
+	g.insert_edge(4, 0, 1)
+	g.insert_edge(8, 0, 7)
+	g.insert_edge(8, 1, 2)
+	g.insert_edge(11, 1, 7)
+	g.insert_edge(7, 2, 3)
+	g.insert_edge(2, 2, 8)
+	g.insert_edge(4, 2, 5)
+	g.insert_edge(9, 3, 4)
+	g.insert_edge(14, 3, 5)
+	g.insert_edge(10, 4, 5)
+	g.insert_edge(2, 5, 6)
+	g.insert_edge(1, 6, 7)
+	g.insert_edge(6, 6, 8)
+	g.insert_edge(7, 7, 8)
+	g.shortest_path(0)
+  
+  # output
+  # [0, 4, 12, 19, 21, 11, 9, 8, 14]
+~~~
+
+ <img src="./typora-user-images/dijkstra.jpg" alt="dijkstra" style="zoom:50%;" />
+
+
+
+**复杂度分析**：
+
+时间复杂度:  $O(E\log V)$
+
+空间复杂度：$O(V)$
+
+## [1631.最小体力消耗路径(中等)](https://leetcode.cn/problems/path-with-minimum-effort/)
+
+~~~python
+class Solution:
+    def minimumEffortPath(self, heights: List[List[int]]) -> int:
+        # dijkdtra & priority queue
+        import heapq
+        m = len(heights)
+        n = len(heights[0])
+        dist = [[float('inf')] * n for _ in range(m)]
+        dist[0][0] = 0
+        pq = [(0, 0, 0)] # w, x, y
+        while pq:
+            cureff, x, y = heapq.heappop(pq)
+            for x_adj,y_adj in [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]:
+                if 0<=x_adj<m and 0<=y_adj<n and max(cureff, abs(heights[x_adj][y_adj]-heights[x][y]))<dist[x_adj][y_adj]:
+                    dist[x_adj][y_adj] = max(cureff, abs(heights[x_adj][y_adj]-heights[x][y]))
+                    heapq.heappush(pq, (dist[x_adj][y_adj], x_adj, y_adj))
+        return dist[m-1][n-1]
+~~~
+

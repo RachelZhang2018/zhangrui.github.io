@@ -1,0 +1,149 @@
+---
+
+layout: post
+
+title: "Leetcode-连续序列-滑动窗口-前缀和"
+
+---
+
+重点在于以每个元素为结尾，找满足要求的序列。
+
+# 滑动窗口
+
+https://segmentfault.com/a/1190000025178927
+
+## 467.环绕字符串中唯一的子字符串
+
+<img src="./typora-user-images/image-20230527232458585.png"/>
+
+重点在于pre，用于记录当前end下，满足条件的子串个数，它是递增的，它的初始值为1。
+
+~~~python
+class Solution:
+    def findSubstringInWraproundString(self, s: str) -> int:
+        pre = 1
+        end_len = {s[0]:1} # 为了去重，记录每个end的最长子串
+        for end in range(1, len(s)):
+            if ord(s[end])-ord(s[end-1])==1 or ord(s[end-1])-ord(s[end])==25:
+                pre += 1
+            else:
+                pre = 1
+            if s[end] in end_len:
+                end_len[s[end]] = max(end_len[s[end]], pre)
+            else:
+                end_len[s[end]] = pre
+        return sum(end_len.values())
+~~~
+
+## 904.水果成蓝
+
+你正在探访一家农场，农场从左到右种植了一排果树。这些树用一个整数数组 fruits 表示，其中 fruits[i] 是第 i 棵树上的水果 种类 。
+
+你想要尽可能多地收集水果。然而，农场的主人设定了一些严格的规矩，你必须按照要求采摘水果：
+
+- 你只有 两个 篮子，并且每个篮子只能装 单一类型 的水果。每个篮子能够装的水果总量没有限制。
+- 你可以选择任意一棵树开始采摘，你必须从 每棵 树（包括开始采摘的树）上 恰好摘一个水果 。采摘的水果应当符合篮子中的水果类型。每采摘一次，你将会向右移动到下一棵树，并继续采摘。
+- 一旦你走到某棵树前，但水果不符合篮子的水果类型，那么就必须停止采摘。
+
+给你一个整数数组 fruits ，返回你可以收集的水果的 最大 数目。
+
+~~~
+输入：fruits = [3,3,3,1,2,1,1,2,3,3,4]
+输出：5
+解释：可以采摘 [1,2,1,1,2] 这五棵树。
+~~~
+
+
+
+题解：**滑动窗口**，固定right指针，向右移动left指针，直到水果种类数满足要求。
+
+~~~python
+class Solution:
+    def totalFruit(self, fruits: List[int]) -> int:
+        ans = 0
+        left = 0
+        count = {}
+        for right, fruit in enumerate(fruits):
+            if fruit in count:
+                count[fruit] += 1
+            else:
+                count[fruit] = 1
+            while len(count) > 2: # left pointer moves towards right
+                count[fruits[left]] -= 1
+                if count[fruits[left]] == 0:
+                    count.pop(fruits[left])
+                left += 1
+            ans = max(ans, right - left + 1)
+        return ans
+~~~
+
+count的key是水果种类，value是每种水果的个数，当 `len(count)>2` 时，需要右移left指针，使水果种类数满足要求。
+
+
+
+# 前缀和
+
+## 剑指Offer II 010. 和为k的子数组
+
+输入：[3, 4, 7, 2, -3, 1, 4, 2], k=7
+
+输出：4
+
+其中和为7的**连续**子数组有[3, 4], [7], [7, 2, -3, 1], [1, 4, 2]共4个。
+
+
+
+**枚举**
+
+找序列 0～i 中，以 i 为结尾的和为 k 的连续子数组的个数。
+
+~~~python
+for i in range(len(nums)):
+  sumup = 0
+  for j in range(i, -1, -1):
+    sumup += nums[j]
+    if sumup == k:
+      count += 1
+~~~
+
+这种做法的时间复杂度为 $O(n^2)$。
+
+
+
+**前缀和+哈希表**
+
+假设 $pre[i]$ 为前 $i+1$ 项的和，优化点在于下面的转化 
+$$
+pre[i] - pre[j] = k \\
+pre[j] = pre[i] - k
+$$
+即把每一个前缀和写入哈希表，和为key，出现次数为value。
+
+在每一步中，查找之前有没有出现key为 $pre[i]-k$ 的前缀和，有几个就证明此处新增了几个子数组。
+
+<img src="./typora-user-images/image-20230527223918301.png"/>
+
+比如此处，$i=5$，$pre[5]=pre[4]+nums[5]=13+1=14$，
+
+要去哈希表中找key为 $pre[5]-k=14-7=7$ 的键，有 1 个，即 $pre[1]=7$。
+
+所以 1 和 5 之间的序列是满足要求的：$pre[5]-pre[1]=7$，子数组为 $nums[2:6]=[7,2,-3,1]$。
+
+~~~python
+class Solution:
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        mp = {0: 1}
+        pre = 0
+        count = 0
+        for i in range(len(nums)):
+            pre += nums[i]
+            diff = pre - k
+            if diff in mp:
+                count += mp[diff]
+            if pre in mp:
+                mp[pre] += 1
+            else:
+                mp[pre] = 1 
+        return count
+~~~
+

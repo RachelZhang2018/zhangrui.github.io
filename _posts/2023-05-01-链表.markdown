@@ -1,0 +1,608 @@
+---
+
+layout: post
+
+title: "Leetcode-链表"
+
+---
+
+# 链表的创建与基本操作
+
+~~~python
+#/usr/bin/python
+#-*- coding: utf-8 -*-
+#Function: simulate the link-list in python
+#__author__: Tresser
+#
+
+class LNode(object):
+    #结点初始化函数, p 即模拟所存放的下一个结点的地址
+    #为了方便传参, 设置 p 的默认值为 0 
+    def __init__(self, data, p=0):
+        self.data = data
+        self.next = p
+
+class LinkList(object):
+    def __init__(self):
+        self.head = None
+
+    #链表初始化函数, 方法类似于尾插
+    def initList(self, data):
+        #创建头结点
+        self.head = LNode(data[0])
+        p = self.head
+        #逐个为 data 内的数据创建结点, 建立链表
+        for i in data[1:]:
+            node = LNode(i)
+            p.next = node
+            p = p.next
+
+    #链表判空
+    def isEmpty(self):
+        if self.head.next == 0:
+            print "Empty List!"
+            return 1
+        else:
+            return 0
+
+    #取链表长度
+    def getLength(self):
+        if self.isEmpty():
+            exit(0)
+
+        p = self.head
+        len = 0
+        while p:
+            len += 1
+            p = p.next
+        return len
+
+    #遍历链表
+    def traveList(self):
+        if self.isEmpty():
+            exit(0)
+        print '\rlink list traving result: ',
+        p = self.head
+        while p:
+            print p.data,
+            p = p.next
+
+    #链表插入数据函数
+    def insertElem(self, key, index):
+        if self.isEmpty():
+            exit(0)
+        if index<0 or index>self.getLength()-1:
+            print "\rKey Error! Program Exit."
+            exit(0)
+
+        p = self.head
+        i = 0
+        while i<=index:
+            pre = p
+            p = p.next
+            i += 1
+
+        #遍历找到索引值为 index 的结点后, 在其后面插入结点
+        node = LNode(key)
+        pre.next = node
+        node.next = p
+
+    #链表删除数据函数
+    def deleteElem(self, index):
+        if self.isEmpty():
+            exit(0)
+        if index<0 or index>self.getLength()-1:
+            print "\rValue Error! Program Exit."
+            exit(0)
+
+        i = 0
+        p = self.head
+        #遍历找到索引值为 index 的结点
+        while p.next:
+            pre = p
+            p = p.next
+            i += 1
+            if i==index:
+                pre.next = p.next
+                p = None
+                return 1
+
+        #p的下一个结点为空说明到了最后一个结点, 删除之即可
+        pre.next = None
+
+
+#初始化链表与数据
+data = [1,2,3,4,5]
+l = LinkList()
+l.initList(data)            
+l.traveList()
+
+#插入结点到索引值为3之后, 值为666
+l.insertElem(666, 3)
+l.traveList()
+
+#删除索引值为4的结点
+l.deleteElem(4)
+l.traveList()
+~~~
+
+
+
+# 206.反转链表
+
+~~~c++
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        if (head) {
+            ListNode* nextNode = head -> next;
+            head -> next = nullptr;
+            while (nextNode) {
+                ListNode* temp = nextNode -> next;
+                nextNode -> next = head;
+                head = nextNode;
+                nextNode = temp;
+            }   
+	    }
+	return head;
+    }
+};
+~~~
+
+
+
+# 237.删除链表中的节点
+
+<img src="./typora-user-images/image-20230327221619787.png" alt="image-20230327221619787" style="zoom:30%;" />
+
+~~~python
+def deleteNode(self, node):
+    """
+    :type node: ListNode
+    :rtype: void Do not return anything, modify node in-place instead.
+    """
+    node.val = node.next.val
+    node.next = node.next.next
+~~~
+
+输入是将要被删除的节点，所以直接将节点值改为下个节点值，使其指向下下个节点，就等于是把此节点删除了。
+
+# 160.相交链表
+
+返回两个链表headA和headB的相交节点
+
+## 哈希集合
+
+将第一个链表headA的所有节点加入哈希集合，遍历headB的所有节点，看是不是在集合中。
+
+时间复杂度：O(m+n)
+
+空间复杂度：O(m)
+
+~~~python
+def getIntersectionNode_old(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+    set1 = set([])
+    p1 = headA
+    while(p1):
+        set1.add(p1)
+        p1 = p1.next
+    p2 = headB
+    while(p2):
+        if p2 in set1:
+            return p2
+        else:
+            p2 = p2.next
+    return None
+~~~
+
+## ==双指针==
+
+交换指针使得二者填补对方的长度，达到相同的长度，同时到达交点。
+
+<img src="./typora-user-images/image-20230327231559113.png"/>
+
+<img src="./typora-user-images/image-20230327231637795.png"/>
+
+<img src="./typora-user-images/image-20230327231705261.png"/>
+
+时间复杂度：O(m+n)
+
+空间复杂度：O(1)
+
+~~~python
+def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:
+    if headA is None or headB is None:
+        return None
+    p1 = headA
+    p2 = headB
+    while p1 != p2:
+        if p1 is None:
+            p1 = headB
+        else:
+            p1 = p1.next
+        if p2 is None:
+            p2 = headA
+        else:
+            p2 = p2.next
+    return p1
+~~~
+
+# 环形链表
+
+## 判断是否有环
+
+==使用快慢指针，有环一定相遇。==
+
+## 找入环节点
+
+==使用快慢指针。==
+
+假设出发点都是节点A，从节点O入环，那么当慢指针入环的时候，快指针到了节点B，此时AO=OB。
+
+假设慢指针位于节点O，快指针位于节点B，这个状态叫做初始状态。那么慢指针每走一圈，快指针走两圈，又回到初始状态。这中间快慢指针一定会相遇一次。
+
+假设快慢指针在C点相遇，在慢指针从C走到O的时候，快指针从C走到B，由于快指针的速度时慢指针的两倍，所以CB=2*CO，所以OC=OB=OA。
+
+所以我们再定义一个从A节点出发的指针，与慢指针从C节点以相同的速度移动，那么两者相遇的节点，就是入环节点O。
+
+即使AO比环的周长要长，也是一样的道理。
+
+<img src="./typora-user-images/image-20230416172222523.png" alt="image-20230416172222523" style="zoom:33%;" />
+
+~~~python
+class Solution:
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        fast = head
+        slow = head
+        meet = None
+        while fast != None:
+            fast = fast.next
+            if fast != None:
+                fast = fast.next
+            slow = slow.next
+            if fast == slow:
+                break
+        if fast is None:
+            return None
+        fast = head
+        while fast != slow:
+            fast = fast.next
+            slow = slow.next
+        return fast
+~~~
+
+
+
+# 排序链表
+
+要求时间复杂度 $O(n\log n)$，空间复杂度 $O(1)$。
+
+归并排序：
+
+如果使用递归的归并排序，则空间复杂度是 $O(\log n)$；迭代的归并排序，空间复杂度是 $O(1)$。
+
+如果使用递归的归并排序，==查找链表中点可以用快慢双指针==。
+
+递归的归并排序：
+
+~~~python
+# Definition of ListNode
+class ListNode(object):
+    def __init__(self, val, next=None):
+        self.val = val
+        self.next = next
+ 
+ 
+class Solution:
+    """
+    @param: head: The head of linked list.
+    @return: You should return the head of the sorted linked list, using constant space complexity.
+    """
+    # 归并法
+    def sortList(self, head):
+        # write your code here
+        if head is None or head.next is None:
+            return head
+        pre = head
+        slow = head               # 使用快慢指针来确定中点
+        fast = head
+        while fast and fast.next:
+            pre = slow
+            slow = slow.next
+            fast = fast.next.next
+        
+        left = head  
+        right = pre.next  
+        pre.next = None           # 从中间打断链表
+        left = self.sortList(left)  
+        right = self.sortList(right)  
+        return self.merge(left,right)
+        
+    def merge(self, left, right):
+        pre = ListNode(-1)
+        first = pre
+        while left and right:
+            if left.val < right.val:
+                pre.next = left
+                pre = left
+                left = left.next
+            else:
+                pre.next = right
+                pre = right
+                right = right.next
+        if left:
+            pre.next = left
+        else:
+            pre.next = right
+                
+        return first.next
+~~~
+
+迭代的归并排序
+
+~~~python
+class Solution:
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        h = head 
+        length = 0
+        merge_len = 1
+        while h:
+            h = h.next
+            length += 1
+        newhead = ListNode(0)
+        newhead.next = head
+        while merge_len < length:
+            pre = newhead
+            h = pre.next
+            while h:
+                h1 = h 
+                c1 = merge_len
+                while c1 and h:
+                    h = h.next
+                    c1 -= 1 
+                # only one list, no need to merge
+                if c1:
+                    break
+                h2 = h 
+                c2 = merge_len
+                while c2 and h:
+                    h = h.next
+                    c2 -= 1
+                # merge h1 and h2
+                c1, c2 = merge_len - c1, merge_len - c2
+                while c1 and c2:
+                    if h1.val <= h2.val:
+                        pre.next = h1
+                        h1 = h1.next
+                        c1 -= 1
+                    else:
+                        pre.next = h2
+                        h2 = h2.next
+                        c2 -= 1
+                    pre = pre.next
+                if c1:
+                    pre.next = h1
+                if c2:
+                    pre.next = h2
+                # find the last node of sorted list
+                while c1 > 0 or c2 > 0: # NOTICE!!!
+                    pre = pre.next
+                    c1 -= 1
+                    c2 -= 1
+                # link the last node of sorted list and the head node of unsorted list
+                pre.next = h
+            merge_len *= 2
+        return newhead.next
+~~~
+
+# 61.旋转链表
+
+<img src="./typora-user-images/image-20230416182201165.png" alt="image-20230416182201165" style="zoom:50%;" />
+
+先闭合链表，再转 $length - k \% length$ 圈，再断开链表。
+
+时间复杂度 $O(n)$，空间复杂度 $O(1)$。
+
+~~~python
+class Solution:
+    def rotateRight(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        if k == 0 or not head or not head.next:
+            return head
+        length = 1
+        h = head
+        while h.next:
+            length += 1
+            h = h.next
+        # link the tail node and the head node
+        h.next = head
+        step = length - k % length
+        h = head
+        pre = ListNode(0)
+        pre.next = head
+        while step:
+            h = h.next
+            step -= 1
+            pre = pre.next
+        pre.next = None
+        return h
+~~~
+
+# 23.合并升序链表
+
+题目：合并k个升序链表
+
+两个两个一组合并，这样一共操作 $\log k$ 轮。
+
+假设最长链表的长度为 $n$，分析下递归的时间复杂度：
+$$
+\begin{align}
+T(k) 
+&= 2 T(k/2) + nk \\
+&= 2^2 T(k/2^2) + 2nk \\
+&= 2^3 T(k/2^3) + 3nk \\
+&= ...\\
+&= 2^{\log k} + nk\log k \\
+&= k + nk\log k \\
+&= O(nk\log k)
+\end{align}
+$$
+[递推式推断递归算法的时间复杂度](https://stackoverflow.com/questions/13467674/determining-complexity-for-recursive-functions-big-o-notation)
+
+下面代码用迭代的方法实现：
+
+~~~python
+import math
+class Solution:
+    def merge_two(self, h1, h2):
+        newhead = ListNode(0)
+        curp = newhead
+        while h1 and h2:
+            if h1.val <= h2.val:
+                curp.next = h1
+                h1 = h1.next
+            else:
+                curp.next = h2
+                h2 = h2.next
+            curp = curp.next
+        if h1:
+            curp.next = h1
+        if h2:
+            curp.next = h2
+        return newhead.next
+    
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        k = len(lists)
+        if k == 0:
+            return None
+        elif k == 1:
+            return lists[0]
+        while k > 1:        
+            merged_list = []
+            cnt = math.ceil(k / 2)
+            for i in range(cnt):
+                h1 = lists[i * 2]
+                if i * 2 + 1 >= k:
+                    merged_list.append(h1)
+                else:
+                    h2 = lists[i * 2 + 1]
+                    merged_two = self.merge_two(h1, h2)
+                    merged_list.append(merged_two)
+            k = len(merged_list)
+            lists = merged_list
+        return merged_list[0]
+~~~
+
+
+
+# 146.LRU缓存（双向链表+哈希表）
+
+请你设计并实现一个满足  **LRU (最近最少使用) 缓存** 约束的数据结构。
+实现 `LRUCache` 类：
+
+- `LRUCache(int capacity)` 以 正整数 作为容量 `capacity` 初始化 LRU 缓存
+- `int get(int key)` 如果关键字 `key` 存在于缓存中，则返回关键字的值，否则返回 `-1` 。
+- `void put(int key, int value)` 如果关键字 `key` 已经存在，则变更其数据值 `value` ；如果不存在，则向缓存中插入该组 `key-value` 。如果插入操作导致关键字数量超过 `capacity` ，则应该 逐出 最久未使用的关键字。
+
+函数 `get` 和 `put` 必须以 `O(1)` 的平均时间复杂度运行。
+
+~~~
+输入
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+输出
+[null, null, null, 1, null, -1, null, -1, 3, 4]
+
+解释
+LRUCache lRUCache = new LRUCache(2);
+lRUCache.put(1, 1); // 缓存是 {1=1}
+lRUCache.put(2, 2); // 缓存是 {1=1, 2=2}
+lRUCache.get(1);    // 返回 1
+lRUCache.put(3, 3); // 该操作会使得关键字 2 作废，缓存是 {1=1, 3=3}
+lRUCache.get(2);    // 返回 -1 (未找到)
+lRUCache.put(4, 4); // 该操作会使得关键字 1 作废，缓存是 {4=4, 3=3}
+lRUCache.get(1);    // 返回 -1 (未找到)
+lRUCache.get(3);    // 返回 3
+lRUCache.get(4);    // 返回 4
+
+来源：力扣（LeetCode）
+链接：https://leetcode.cn/problems/lru-cache
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+~~~
+
+<img src="./typora-user-images/image-20230614233839946.png" alt="image-20230614233839946" style="zoom:50%;" />
+
+维护一个哈希表存储每一个节点，key是节点的key，val是节点本身。这样查找可以达到 `O(1)`。
+
+`get` 操作后需要将节点移至链表头部。
+
+`put` 操作后需要将节点移至头部，另外添加新节点后，需要判断size是否大于capacity，大于的话需要将尾部节点删除。
+
+以上操作都要改变size和哈希表的内容。
+
+~~~python
+class DLinkedNode:
+    def __init__(self, key=0, value=0):
+        self.key = key
+        self.value = value
+        self.prev = None
+        self.next = None
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.cache = {}
+        self.head = DLinkedNode()
+        self.tail = DLinkedNode()
+        self.head.next = self.tail
+        self.tail.prev = self.head
+        self.capacity = capacity
+        self.size = 0
+
+    def get(self, key: int) -> int:
+        if key in self.cache:
+            node = self.cache[key]
+            self.move_to_head(node)
+            return node.value
+        else:
+            return -1
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            node = self.cache[key]
+            node.value = value
+            self.move_to_head(node)
+        else:
+            newnode = DLinkedNode(key, value)
+            self.cache[key] = newnode
+            self.add_to_head(newnode)
+            self.size += 1
+            if self.size > self.capacity:
+                remove_key = self.remove_tail()
+                self.cache.pop(remove_key)
+                self.size -= 1
+
+    def remove_node(self, node):
+        node.prev.next = node.next
+        node.next.prev = node.prev
+
+    def add_to_head(self, node):
+        node.next = self.head.next
+        node.next.prev = node
+        self.head.next = node
+        node.prev = self.head
+
+    def move_to_head(self, node):
+        self.remove_node(node)
+        self.add_to_head(node)
+
+    def remove_tail(self):
+        node = self.tail.prev
+        self.remove_node(node)
+        return node.key
+
+# Your LRUCache object will be instantiated and called as such:
+# obj = LRUCache(capacity)
+# param_1 = obj.get(key)
+# obj.put(key,value)
+~~~
+

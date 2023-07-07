@@ -1,0 +1,74 @@
+---
+
+layout: post
+
+title: "Leetcode-正则表达式匹配"
+
+---
+
+# 题目描述
+
+<img src="./typora-user-images/image-20230311121831401.png"/>
+
+# 分析
+
+从右往左扫描更合理：
+
+<img src="./typora-user-images/image-20230311121933196.png"/>
+
+分情况处理：
+
+$s[i]$ 是 $s$ 串最右端字符；$p[j]$ 是 $p$ 串最右端字符。
+
+~~~python
+# 最右端字符相等
+if s[i] == p[j] or p[j] == '.':
+	dp[i][j] = dp[i-1][j-1]
+# 最右端字符不相等，但是p串有*
+elif p[j] == '*':
+  # s能和p的*前面的字符匹配上，分为三种情况：
+  if s[i] == p[j-1] or p[j-1] == '.':
+    # 1. 匹配了0次
+    # 2. 匹配了1次
+    # 3. 匹配了>=2次，这个时候把s串末尾抵消一个字符（非常重要！！！）
+    dp[i][j] = dp[i][j-2] or dp[i-1][j-2] or dp[i-1][j]
+  # s如果和p的*前面的字符匹配不上，默认匹配了0次：
+	else:
+  	dp[i][j] = dp[i][j-2]
+# 否则就没有匹配上
+else:
+  dp[i][j] = 0
+~~~
+
+# 代码
+
+~~~python
+class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        slen = len(s)
+        plen = len(p)
+        dp = [[0 for _ in range(plen+1)] for _ in range(slen+1)]
+        dp[0][0] = 1
+        for j in range(2, plen+1):
+            if p[j-1] == '*':
+                dp[0][j] = dp[0][j-2]
+        for i in range(1, slen+1):
+            for j in range(1, plen+1):
+                if s[i-1] == p[j-1] or p[j-1] == '.':
+                    dp[i][j] = dp[i-1][j-1]
+                elif p[j-1] == '*':
+                    if s[i-1] == p[j-2] or p[j-2] == '.':
+                        # '*' means 0 time of duplication
+                        # '*' means 1 time of duplication
+                        # '*' means >=2 times of duplication
+                        dp[i][j] = (dp[i][j-2] or dp[i-1][j-2] or dp[i-1][j])
+                    else:
+                        dp[i][j] = dp[i][j-2]
+                else:
+                    dp[i][j] = 0
+        return bool(dp[slen][plen])
+~~~
+
+# 时间复杂度
+
+动态规划算法，时间复杂度$O(mn)$。

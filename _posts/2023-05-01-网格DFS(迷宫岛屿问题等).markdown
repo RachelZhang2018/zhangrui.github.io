@@ -1,0 +1,338 @@
+---
+
+layout: post
+
+title: "Leetcode-网格DFS(迷宫岛屿问题等)"
+
+---
+
+# 迷宫问题
+
+求左上角到右下角出口的唯一迷宫的路径。1代表墙，0代表路。只能横竖走，不能斜着走。
+
+输入：
+
+~~~
+0 0 1 1 0
+0 1 0 0 0
+0 1 0 1 0
+0 0 0 1 0
+0 1 0 1 0
+~~~
+
+输出：
+
+~~~
+(0,0)
+(0,1)
+(0,2)
+(0,3)
+(1,3)
+(2,3)
+(2,2)
+(1,2)
+(1,3)
+(1,4)
+(2,4)
+(3,4)
+(4,4)
+~~~
+
+
+
+回溯法：
+
+~~~python
+import sys
+
+# parse input
+maze = []
+row, col = map(int, input().split())
+while True:
+    try:
+        currow = list(map(int, input().split()))
+        maze.append(currow)
+    except:
+        break
+assert len(maze) == row and len(maze[0]) == col
+
+path = [(0,0)]
+
+def walk(cur_loc):
+    i, j = cur_loc
+    if i == row-1 and j == col-1:
+        return
+    maze[i][j] = 2
+    check_nodes = [(i-1,j), (i+1,j), (i,j-1), (i,j+1)]
+    for node in check_nodes:
+        if 0<=node[0]<=row-1 and 0<=node[1]<=col-1:
+            if maze[node[0]][node[1]] == 0:
+                path.append(node)
+                walk(node)
+                break
+    else:
+        path.pop()
+        walk(path[-1])
+
+walk((0, 0))
+for p in path:
+    print("("+str(p[0])+","+str(p[1])+")")
+
+~~~
+
+
+
+==python技巧：for...else...==
+
+1. for中的循环遍历完了以后，正常执行else里面的语句；
+2. 如果for中没有循环完，而是break跳出，则不执行else；
+3. continue不影响else的执行。
+
+
+
+# 岛屿问题
+
+## 200.岛屿数量(中等)
+
+
+
+<img src="./typora-user-images/IMG_E70FB6D707C8-1.jpeg" alt="IMG_E70FB6D707C8-1" style="zoom: 33%;" />
+
+网格DFS的一个模板：
+
+~~~python
+def count_islands(grid):
+	count = 0
+	m = len(grid)
+	n = len(grid[0])
+	for i in range(m):
+		for j in range(n):
+			if grid[i][j] == 1:
+				count += 1
+				grid[i][j] = 2
+        # 重要的是这个函数⬇️
+				def expand_island(i, j):
+					check_list = [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
+					for node in check_list:
+						if 0 <= node[0] < m and 0 <= node[1] < n:
+							if grid[node[0]][node[1]] == 1:
+								grid[node[0]][node[1]] = 2
+								expand_island(node[0], node[1])
+						else:
+							continue
+				expand_island(i, j)
+	return count 
+~~~
+
+
+
+## 463.岛屿周长(简单)
+
+备注:1.岛屿中没有湖;2.仅一个岛屿
+
+注意!!!内部定义的函数要改变外部函数的变量值，使用==iterable==或==outter.varname==或==nonlocal==关键字!!! (见笔记python内部函数)
+
+<img src="./typora-user-images/image-20230518225737565.png"/>
+
+~~~python
+def island_perimeter(grid):
+	island_perimeter.perimeter = 0
+	m = len(grid)
+	n = len(grid[0])
+	for i in range(m):
+		for j in range(n):
+			if grid[i][j] == 1:
+				grid[i][j] = 2
+				def expand_island(i, j):
+					check_list = [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
+					for node in check_list:
+						if 0 <= node[0] < m and 0 <= node[1] < n:
+							if grid[node[0]][node[1]] == 1:
+								grid[node[0]][node[1]] = 2
+								expand_island(node[0], node[1])
+							elif grid[node[0]][node[1]] == 0:
+								island_perimeter.perimeter += 1 # perimeter adjacent to water
+						else:
+							island_perimeter.perimeter += 1 # perimeter adjacent to border
+				expand_island(i, j)
+	return island_perimeter.perimeter 
+~~~
+
+也可以直接计算：
+
+陆地块数\*4 - 相邻边\*2
+
+相似题目：[892.三维形体的表面积(简单)](https://leetcode.cn/problems/surface-area-of-3d-shapes/)
+
+## 695.岛屿最大面积(中等)
+
+~~~python
+def max_islands_area(grid):
+	max_area = 0
+	m = len(grid)
+	n = len(grid[0])
+	for i in range(m):
+		for j in range(n):
+			if grid[i][j] == 1:
+				cur_area = 1
+				grid[i][j] = 2
+				def expand_island(i, j):
+					check_list = [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
+					for node in check_list:
+						if 0 <= node[0] < m and 0 <= node[1] < n:
+							if grid[node[0]][node[1]] == 1:
+								nonlocal cur_area
+								cur_area += 1
+								grid[node[0]][node[1]] = 2
+								expand_island(node[0], node[1])
+						else:
+							continue
+				expand_island(i, j)
+				max_area = max(cur_area, max_area)
+	return max_area 
+~~~
+
+## 827.最大人工岛(困难)
+
+<img src="./typora-user-images/image-20230518225937920.png"/>
+
+<img src="./typora-user-images/image-20230518230009519.png"/>
+
+~~~python
+def max_artificial_island(grid):
+	areas = []
+    area_index = 1
+    max_area = 0
+    m = len(grid)
+    n = len(grid[0])
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 1:
+                area_index += 1
+                cur_area = 1
+                grid[i][j] = area_index
+                def expand_island(i, j):
+                    check_list = [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
+                    for node in check_list:
+                        if 0 <= node[0] < m and 0 <= node[1] < n:
+                            if grid[node[0]][node[1]] == 1:
+                                nonlocal cur_area, area_index
+                                cur_area += 1
+                                grid[node[0]][node[1]] = area_index
+                                expand_island(node[0], node[1])
+                        else:
+                            continue
+                expand_island(i, j)
+                areas.append(cur_area)
+    # get areas = [9, 3]
+    # grid = [
+    # 	[2,2,0,2,0,0],
+    # 	[2,2,0,2,0,0],
+    # 	[0,2,2,2,0,0],
+    # 	[0,0,0,0,3,0],
+    # 	[0,0,0,3,3,0]
+    # ]
+
+    # find man-made island
+    count_water = 0
+    for i in range(m):
+        for j in range(n):
+            if grid[i][j] == 0:
+                count_water += 1
+                check_list = [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
+                adjacent_islands = set()
+                for node in check_list:
+                    r, c = node
+                    if 0 <= r < m and 0 <= c < n and grid[r][c] != 0:
+                        adjacent_islands.add(grid[r][c])
+                cur_area = 1
+                for item in adjacent_islands:
+                    cur_area += areas[item-2]
+                max_area = max(cur_area, max_area)
+    if count_water == 0:
+        max_area = areas[0] # no ocean
+
+    return max_area 
+
+~~~
+
+$\color{red}{\text{注意没有海洋的情况！！！}}$
+
+## ==缓存==深度优先搜索
+
+剑指Offer II 112.最长递增路径（困难）
+
+<img src="./typora-user-images/image-20230610132916890.png" alt="image-20230610132916890" style="zoom:50%;" />
+
+朴素的深度优先搜索会导致超时。
+
+由于从每个网格出发的最长递增路径长度是固定的，所以可以缓存起来。
+
+以后用到的时候，如果这个值大于0，就可以直接取用，否则就递归调用深度优先搜索。
+
+~~~python
+class Solution:
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        m = len(matrix)
+        n = len(matrix[0])
+        memo = [[0]*n for row in range(m)]
+
+        def path_length(i, j):
+            if memo[i][j]:
+                return memo[i][j]
+            memo[i][j] = 1
+            directions = [(i-1,j),(i+1,j),(i,j-1),(i,j+1)]
+            for direction in directions:
+                if 0 <= direction[0] < m and 0 <= direction[1] < n and matrix[direction[0]][direction[1]] > matrix[i][j]:
+                    memo[i][j] = max(memo[i][j], path_length(direction[0],direction[1])+1)
+            return memo[i][j]
+
+        max_path = 0
+        for i in range(m):
+            for j in range(n):
+                max_path = max(max_path, path_length(i, j))
+        return max_path
+~~~
+
+`memo` 中存的就是缓存的每个网格出发的最长递增路径长度。
+
+如果 `memo[i][j]` 中值不为0，则直接返回即可。
+
+
+
+另外，python可以使用==@lru_cache==修饰器来缓存最近的调用结果。
+
+`@lru_cache(maxsize=128, typed=False)`
+
+`maxsize` 设置缓存大小，例如：缓存最近调用128次函数的结果。设置为 `None` 的时候大小无限制。
+
+`typed` 设置为 `True` 时，不同的参数类型会被缓存在不同的缓存中。例如 f(3) 和 f(3.0) 会被认为是不同的调用。
+
+~~~python
+class Solution:
+    
+    DIRS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+    def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
+        if not matrix:
+            return 0
+        
+        @lru_cache(None)
+        def dfs(row: int, column: int) -> int:
+            best = 1
+            for dx, dy in Solution.DIRS:
+                newRow, newColumn = row + dx, column + dy
+                if 0 <= newRow < rows and 0 <= newColumn < columns and matrix[newRow][newColumn] > matrix[row][column]:
+                    best = max(best, dfs(newRow, newColumn) + 1)
+            return best
+
+        ans = 0
+        rows, columns = len(matrix), len(matrix[0])
+        for i in range(rows):
+            for j in range(columns):
+                ans = max(ans, dfs(i, j))
+        return ans
+~~~
+
+
+

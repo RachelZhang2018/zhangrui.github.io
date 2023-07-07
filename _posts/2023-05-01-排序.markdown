@@ -1,0 +1,145 @@
+---
+
+layout: post
+
+title: "Leetcode-排序"
+
+---
+
+# 归并排序 Merge sort
+
+## 递归 Recursion
+
+这个算法首先将数组分成两个部分，然后递归地对左右两个部分进行归并排序，最后将排序后的左右两个部分合并成一个有序数组。
+
+在合并两个部分时，我们使用了双指针的方法，将左右两个部分的最小值依次加入到结果数组中，直到其中一个部分被遍历完毕，然后将剩余的部分依次加入到结果数组的末尾，最终得到一个完整的有序数组。
+
+~~~python
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    
+    mid = len(arr) // 2
+    left = arr[:mid]
+    right = arr[mid:]
+    
+    left = merge_sort(left)
+    right = merge_sort(right)
+    
+    return merge(left, right)
+
+def merge(left, right):
+    result = []
+    i = j = 0
+    
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    
+    result += left[i:]
+    result += right[j:]
+    
+    return result
+
+~~~
+
+时间和空间复杂度分析：
+
+时间复杂度 $O(n\log n)$；
+
+空间复杂度 $O(n)$。
+
+每次merge操作需要 $O(n)$，二分操作次数 $O(\log n)$。时间复杂度比较稳定。
+
+空间上需要一个长度为 $n$ 的数组存储排序结果。空间复杂度比较高。
+
+## 迭代 Iteration
+
+迭代算法不需要使用递归调用，因此==不需要使用系统的栈空间==，可以避免递归深度过大导致栈溢出的问题。
+
+**递归归并排序**中，每次递归都需要创建一个新的数组，**空间复杂度较高**。
+
+而**迭代归并排序**则是在原数组上进行排序，不需要创建新的数组，**空间复杂度较低**。
+
+~~~python
+def merge_sort(arr):
+    n = len(arr)
+    size = 1
+    while size < n:
+        for i in range(0, n, 2*size):
+            left = arr[i:i+size]
+            right = arr[i+size:i+2*size]
+            arr[i:i+2*size] = merge(left, right)
+        size *= 2
+    return arr
+
+def merge(left, right):
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result += left[i:]
+    result += right[j:]
+    return result
+
+~~~
+
+时间和空间复杂度分析：
+
+时间复杂度 $O(n\log n)$；
+
+空间复杂度 $O(n)$。
+
+# 快速排序 Quick Sort
+
+## 递归 Recursion
+
+~~~python
+def quick_sort(arr):
+    if len(arr) < 2:
+        return arr
+    else:
+        pivot = arr[0]
+        left = [x for x in arr[1:] if x < pivot]
+        right = [x for x in arr[1:] if x >= pivot]
+        return quick_sort(left) + [pivot] + quick_sort(right)
+~~~
+
+时间复杂度O(nlogn)，空间复杂度O(n)。
+
+## 分治
+
+~~~python
+def partition(left, right, nums):
+	pivot = nums[left]
+	while left < right:
+		while left < right and nums[right] >= pivot:
+			right -= 1
+		nums[left] = nums[right]
+		while left < right and nums[left] <= pivot:
+			left += 1
+		nums[right] = nums[left]
+	nums[left] = pivot
+	return left
+
+def quicksort(left, right, nums):
+	if left < right:
+		pivot = partition(left, right, nums)
+		quicksort(left, pivot, nums)
+		quicksort(pivot+1, right, nums)
+
+nums = [5,3,6,8,1,0,4,2,9,7]
+quicksort(0, len(nums)-1, nums)
+print(nums)
+~~~
+
+原地排序，省空间。

@@ -1,0 +1,178 @@
+---
+
+layout: post
+
+title: "Leetcode-集合"
+
+---
+
+Python集合中的元素不重复，无序，可以是不同类型的元素。
+
+# 初始化
+
+1. 直接初始化
+
+~~~python
+my_set = {"Geeks", "for", "Geeks", 10, 52.7, True}
+print(my_set)
+# {True, 10, 'Geeks', 52.7, 'for'}
+# 去重了
+~~~
+
+2. list转set
+
+~~~python
+# Normal Set
+normal_set = set(["a", "b","c"])
+print(normal_set)
+# {'a', 'c', 'b'}
+
+# Frozen Set
+# 无法添加或删除元素
+frozen_set = frozenset(["e", "f", "g"])
+print(frozen_set)
+# {'e', 'g', 'f'}
+~~~
+
+# 方法
+
+添加`add`，删除`remove`，存在`key in set`，不存在`key not in set`，长度`len(set)`。
+
+## setA.union(setB)或者setA|setB
+
+时间复杂度：$O(len(setA)+len(setB))$
+
+~~~python
+# Python Program to
+# demonstrate union of
+# two sets
+
+people = {"Jay", "Idrish", "Archil"}
+vampires = {"Karan", "Arjun"}
+dracula = {"Deepanshu", "Raju"}
+
+# Union using union()
+# function
+population = people.union(vampires)
+
+print("Union using union() function")
+print(population)
+
+# Union using "|"
+# operator
+population = people|dracula
+
+print("\nUnion using '|' operator")
+print(population)
+
+"""
+Union using union() function
+{'Karan', 'Idrish', 'Jay', 'Arjun', 'Archil'}
+
+Union using '|' operator
+{'Deepanshu', 'Idrish', 'Jay', 'Raju', 'Archil'}
+"""
+~~~
+
+## setA.intersection(setB)或者setA&setB
+
+时间复杂度：$O(\min(len(setA),len(setB)))$
+
+~~~python
+# Python program to
+# demonstrate intersection
+# of two sets
+
+set1 = set()
+set2 = set()
+
+for i in range(5):
+	set1.add(i)
+
+for i in range(3,9):
+	set2.add(i)
+
+# Intersection using
+# intersection() function
+set3 = set1.intersection(set2)
+
+print("Intersection using intersection() function")
+print(set3)
+
+# Intersection using
+# "&" operator
+set3 = set1 & set2
+
+print("\nIntersection using '&' operator")
+print(set3)
+
+"""
+Intersection using intersection() function
+{3, 4}
+
+Intersection using '&' operator
+{3, 4}
+"""
+~~~
+
+## setA.difference(setB)或者setA-setB
+
+时间复杂度：$O(len(setA))$
+
+~~~python
+# Python program to
+# demonstrate difference
+# of two sets
+
+set1 = set()
+set2 = set()
+
+for i in range(5):
+	set1.add(i)
+
+for i in range(3,9):
+	set2.add(i)
+
+# Difference of two sets
+# using difference() function
+set3 = set1.difference(set2)
+
+print(" Difference of two sets using difference() function")
+print(set3)
+
+# Difference of two sets
+# using '-' operator
+set3 = set1 - set2
+
+print("\nDifference of two sets using '-' operator")
+print(set3)
+
+"""
+Difference of two sets using difference() function
+{0, 1, 2}
+
+Difference of two sets using '-' operator
+{0, 1, 2}
+"""
+~~~
+
+## set.clear()
+
+Set Clear() method empties the whole set inplace.
+
+## 其他操作
+
+|  Operators   | Notes                                            |
+| :----------: | :----------------------------------------------- |
+|   key in s   | containment check                                |
+| key not in s | non-containment check                            |
+|   s1 == s2   | s1 is equivalent to s2                           |
+|   s1 != s2   | s1 is not equivalent to s2                       |
+|   s1 <= s2   | s1 is subset of s2                               |
+|   s1 < s2    | s1 is proper subset of s2                        |
+|   s1 >= s2   | s1 is superset of s2                             |
+|   s1 > s2    | s1 is proper superset of s2                      |
+|   s1 \| s2   | the union of s1 and s2                           |
+|   s1 & s2    | the intersection of s1 and s2                    |
+|   s1 – s2    | the set of elements in s1 but not s2             |
+|   s1 ˆ s2    | the set of elements in precisely one of s1 or s2 |

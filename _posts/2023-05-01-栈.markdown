@@ -1,0 +1,34 @@
+---
+
+layout: post
+
+title: "Leetcode-栈"
+
+---
+
+# 32.最长有效括号(困难)
+
+输入：s = "())((())"
+
+输出：4
+
+解释：最长有效括号序列是"(())"
+
+思路：用栈来记录最后一个右括号所在下标
+
+1. 遇到"("就把下标入栈；
+2. 遇到")"先把栈顶元素弹出，再看
+   1. 如果栈空了，则证明当前右括号没有匹配到坐括号，将其下标入栈，作为【最后一个没有被匹配的右括号的下标】；
+   2. 如果栈没空，则以当前下标减去栈顶元素即为【以该右括号为结尾的最长有效括号长度】。
+
+<img src="./typora-user-images/image-20230531001536257.png" alt="image-20230531001536257" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230531001552022.png" alt="image-20230531001552022" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230531001611351.png" alt="image-20230531001611351" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230531001626704.png" alt="image-20230531001626704" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230531001647412.png" alt="image-20230531001647412" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230531001702350.png" alt="image-20230531001702350" style="zoom:50%;" />

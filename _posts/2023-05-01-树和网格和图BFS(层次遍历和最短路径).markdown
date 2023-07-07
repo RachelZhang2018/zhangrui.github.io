@@ -1,0 +1,232 @@
+---
+
+layout: post
+
+title: "Leetcode-树和网格和图BFS(层次遍历和最短路径)"
+
+---
+
+# 树的层次遍历
+
+DFS遍历使用递归；
+
+BFS遍历使用队列。
+
+## 102.二叉树的层序遍历
+
+https://leetcode.cn/problems/binary-tree-level-order-traversal/
+
+<img src="./typora-user-images/image-20230521163506689.png"/>
+
+直接用BFS遍历，最后会得到一个一维数组，而我们的目的是要区分每一层的节点。
+
+所以我们在每一层遍历开始前，先记录节点的数量，一次性处理完以后，再进行下一层。
+
+~~~python
+from collections import deque
+class Solution:
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        res = []
+        my_queue = deque()
+        if root is not None:
+            my_queue.append(root)
+        while len(my_queue) != 0:
+            layer_size = len(my_queue)
+            layer = []
+            for i in range(layer_size):
+                cur_node = my_queue.popleft()
+                layer.append(cur_node.val)
+                if cur_node.left is not None:
+                    my_queue.append(cur_node.left)
+                if cur_node.right is not None:
+                    my_queue.append(cur_node.right)
+            res.append(layer)
+        return res
+~~~
+
+from collections import deque
+
+duque.append() = mylist.append()
+
+duque.popleft() = mylist.pop(0)
+
+len(deque) = len(mylist)
+
+## 其他
+
+[103. Binary Tree Zigzag Level Order Traversal 之字形层序遍历(中等)](https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/)
+[199. Binary Tree Right Side View 找每一层的最右结点(中等)](https://leetcode.cn/problems/binary-tree-right-side-view/)
+[515. Find Largest Value in Each Tree Row 计算每一层的最大值(中等)](https://leetcode.cn/problems/find-largest-value-in-each-tree-row/)
+[637. Average of Levels in Binary Tree 计算每一层的平均值(简单)](https://leetcode.cn/problems/average-of-levels-in-binary-tree/)
+
+# 最短路径
+
+## 网格的==不带权==最短路径
+
+<img src="./typora-user-images/image-20230521165214442.png" alt="image-20230521165214442" style="zoom:50%;" />
+
+### 1162.离开陆地的最大距离
+
+https://leetcode.cn/problems/as-far-from-land-as-possible/
+
+此处的距离指曼哈顿距离(Manhattan Distance)：`(x0, y0)` 和 `(x1, y1)` 这两个单元格之间的距离是 `|x0 - x1| + |y0 - y1|` 。
+
+<img src="./typora-user-images/image-20230521165608709.png" alt="image-20230521165608709" style="zoom:50%;" />
+
+距离源点`(2,2)`的层次遍历。输出：4。
+
+<img src="./typora-user-images/image-20230521165824290.png" alt="image-20230521165824290" style="zoom:50%;" />
+
+==多源BFS==：把几个起点放入队列同时进行遍历。
+
+起点：`(0,0)` ， `(1,4)` 和  `(4,0)`，输出3。
+
+~~~python
+class Solution:
+    def maxDistance(self, grid: List[List[int]]) -> int:
+        myque = []
+        m = len(grid)
+        n = len(grid[0])
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j] == 1:
+                    myque.append((i,j))
+        if len(myque) == m*n or len(myque) == 0:
+            return -1
+        max_dist = 0
+        while True:
+            layer_size = len(myque)
+            for index in range(layer_size):
+                i, j = myque.pop(0)
+                # up
+                if i-1 >= 0 and grid[i-1][j] == 0:
+                    myque.append((i-1,j))
+                    grid[i-1][j] = max_dist + 2
+                # down
+                if i+1 < m and grid[i+1][j] == 0:
+                    myque.append((i+1,j))
+                    grid[i+1][j] = max_dist + 2
+                # left
+                if j-1 >= 0 and grid[i][j-1] == 0:
+                    myque.append((i,j-1))
+                    grid[i][j-1] = max_dist + 2
+                # right
+                if j+1 < n and grid[i][j+1] == 0:
+                    myque.append((i,j+1))
+                    grid[i][j+1] = max_dist + 2
+            if len(myque) != 0:
+                max_dist += 1
+            else:
+                break
+        return max_dist 
+
+~~~
+
+### 其他
+
+[542. 01 Matrix(中等)](https://leetcode.cn/problems/01-matrix/)
+[994. Rotting Oranges()](https://leetcode.cn/problems/rotting-oranges/)
+
+## 图的不带权最短路径
+
+[310.最小高度树(中等)](https://leetcode.cn/problems/minimum-height-trees/)
+
+树是一个无向图，其中任何两个顶点只通过一条路径连接。 
+
+换句话说，==一个任何没有简单环路的连通图都是一棵树==。
+
+给你一棵包含 n 个节点的树，标记为 0 到 n - 1 。给定数字 n 和一个有 n - 1 条无向边的 edges 列表（每一个边都是一对标签），其中 edges[i] = [ai, bi] 表示树中节点 ai 和 bi 之间存在一条无向边。
+
+可选择树中任何一个节点作为根。当选择节点 x 作为根节点时，设结果树的高度为 h 。在所有可能的树中，具有最小高度的树（即，min(h)）被称为 最小高度树 。
+
+请你找到所有的 最小高度树 并按 任意顺序 返回它们的根节点标签列表。
+
+树的 高度 是指根节点和叶子节点之间最长向下路径上边的数量。
+
+<img src="./typora-user-images/image-20230521224752749.png"/>
+
+图的存储：邻接矩阵
+
+|       | 0    | 1    | 2    | 3    |
+| ----- | ---- | ---- | ---- | ---- |
+| **0** | 0    | 1    | 0    | 0    |
+| **1** | 1    | 0    | 1    | 1    |
+| **2** | 0    | 1    | 0    | 0    |
+| **3** | 0    | 1    | 0    | 0    |
+
+**第一种做法：$\color{red}{\text{超时！！！}}$**
+
+将每个节点作为根，然后BFS计算树高，最后选择最矮的树。
+
+~~~python
+class Solution:
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        graph = [[0]*n for _ in range(n)]
+        for e in edges:
+            i, j = e
+            graph[i][j] = 1
+            graph[j][i] = 1
+        heights = []
+        for node in range(n):
+            height = 0
+            queue = [node]
+            checked = []
+            while len(queue) != 0:
+                height += 1
+                layer_size = len(queue)
+                for count in range(layer_size):
+                    curnode = queue.pop(0)
+                    checked.append(curnode)
+                    for col in range(n):
+                        if graph[curnode][col] == 1 and col not in checked:
+                            queue.append(col)
+            heights.append(height)
+        min_height = 200000
+        for h in heights:
+            min_height = min(min_height, h)
+        res = [index for (index, h) in enumerate(heights) if h == min_height]
+        return res
+~~~
+
+**第二种做法**：从外围（度为1的节点）开始向内找，将最内层的节点作为根。这个中间节点就相当于把整个距离二分了。
+
+如果还按照之前的每扩展一个节点就添加到队列中做法，是不正确的。
+
+如下例子，每次队列中分别是 $[0,5,6],[1,3,4],[2]$ ，最后结果是 $[2]$，然而正确答案是 $[1,2]$。
+
+错误的地方在于，3之后的1不应该被添加进队列中，因为此时1的度还不是1。
+
+我们只能==将度为1的节点加入队列==。所以每次pop之后，需要将邻接节点的度减1。
+
+<img src="./typora-user-images/image-20230521235929010.png"/>
+
+另外，==用邻接矩阵存图会超时==。此处给每个节点存了个邻接节点的list。
+
+~~~python
+from copy import deepcopy
+class Solution:
+    def findMinHeightTrees(self, n: int, edges: List[List[int]]) -> List[int]:
+        graph = {}
+        for node in range(n):
+            graph[node] = []
+        for e in edges:
+            a, b = e
+            graph[a].append(b)
+            graph[b].append(a)
+        degrees = []
+        for node in graph:
+            degrees.append(len(graph[node]))
+        queue = [node for (node, degree) in enumerate(degrees) if degree == 1]
+        res = [0]
+        while len(queue) != 0:
+            layer_size = len(queue)
+            res = deepcopy(queue)
+            for count in range(layer_size):
+                curnode = queue.pop(0)
+                for neighbor in graph[curnode]:
+                    degrees[neighbor] -= 1
+                    if degrees[neighbor] == 1:
+                        queue.append(neighbor)
+        return res
+~~~
+

@@ -1,0 +1,72 @@
+---
+
+layout: post
+
+title: "Leetcode-技巧题"
+
+---
+
+# 41.缺失的第一个正数
+
+<img src="./typora-user-images/image-20230602000450041.png" alt="image-20230602000450041" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230602000515960.png" alt="image-20230602000515960" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230602000544445.png" alt="image-20230602000544445" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230602000600374.png" alt="image-20230602000600374" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230602000617075.png" alt="image-20230602000617075" style="zoom:50%;" />
+
+~~~python
+class Solution:
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        n = len(nums)
+        for i in range(n):
+            if nums[i] <= 0:
+                nums[i] = n + 1
+        
+        for i in range(n):
+            num = abs(nums[i])
+            if num <= n:
+                nums[num - 1] = -abs(nums[num - 1])
+        
+        for i in range(n):
+            if nums[i] > 0:
+                return i + 1
+        
+        return n + 1
+
+"""
+作者：LeetCode-Solution
+链接：https://leetcode.cn/problems/first-missing-positive/solution/que-shi-de-di-yi-ge-zheng-shu-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+"""
+~~~
+
+<img src="./typora-user-images/image-20230602000723732.png" alt="image-20230602000723732" style="zoom:50%;" />
+
+<img src="./typora-user-images/image-20230602000739554.png" alt="image-20230602000739554" style="zoom:50%;" />
+
+~~~python
+class Solution:
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        n = len(nums)
+        for i in range(n):
+            while 1 <= nums[i] <= n and nums[nums[i] - 1] != nums[i]:
+                nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+        for i in range(n):
+            if nums[i] != i + 1:
+                return i + 1
+        return n + 1
+"""
+作者：LeetCode-Solution
+链接：https://leetcode.cn/problems/first-missing-positive/solution/que-shi-de-di-yi-ge-zheng-shu-by-leetcode-solution/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+"""
+~~~
+
+<img src="./typora-user-images/image-20230602000819963.png" alt="image-20230602000819963" style="zoom:50%;" />
+
