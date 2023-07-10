@@ -8,7 +8,7 @@ title: "Leetcode-分发糖果"
 
 # 题目
 
-<img src="./typora-user-images/image-20230309212746480.png" alt="image-20230309212746480" style="zoom: 67%;" />
+<img src="/_posts/typora-user-images/image-20230309212746480.png" alt="image-20230309212746480" style="zoom: 67%;" />
 
 # 两次遍历
 
@@ -25,7 +25,7 @@ title: "Leetcode-分发糖果"
 
 # 对比图
 
-<img src="./typora-user-images/image-20230306234035819.png"/>
+<img src="/_posts/typora-user-images/image-20230306234035819.png"/>
 
 # 代码
 

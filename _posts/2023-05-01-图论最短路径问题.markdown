@@ -102,7 +102,7 @@ cut （图割）是图中连接两个顶点集合的边的集合。
 
 Prim's Algorithm就是在每一步中找到一个cut，选其中权重最小的边，将其顶点添加到MST中。
 
-<img src="./typora-user-images/PrimMST.jpg"/>
+<img src="/_posts/typora-user-images/PrimMST.jpg"/>
 
 维护一个key数组，长度为V，记录当前每个顶点与MST连接的边的最小权重；
 
@@ -281,7 +281,7 @@ if __name__=='__main__':
   # [0, 4, 12, 19, 21, 11, 9, 8, 14]
 ~~~
 
- <img src="./typora-user-images/dijkstra.jpg" alt="dijkstra" style="zoom:50%;" />
+ <img src="/_posts/typora-user-images/dijkstra.jpg" alt="dijkstra" style="zoom:50%;" />
 
 
 

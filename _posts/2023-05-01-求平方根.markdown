@@ -47,7 +47,7 @@ class Solution:
 
 切线是曲线的线性逼近。
 
-<img src="./typora-user-images/image-20230504230406287.png"/>
+<img src="/_posts/typora-user-images/image-20230504230406287.png"/>
 
 曲线方程为 $f(x) = x^2 - C$，从 $x_0$ 处开始迭代，则在 $x_0$ 点出的切线为：
 $$

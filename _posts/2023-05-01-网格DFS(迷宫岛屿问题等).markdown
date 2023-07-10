@@ -96,7 +96,7 @@ for p in path:
 
 
 
-<img src="./typora-user-images/IMG_E70FB6D707C8-1.jpeg" alt="IMG_E70FB6D707C8-1" style="zoom: 33%;" />
+<img src="/_posts/typora-user-images/IMG_E70FB6D707C8-1.jpeg" alt="IMG_E70FB6D707C8-1" style="zoom: 33%;" />
 
 网格DFS的一个模板：
 
@@ -132,7 +132,7 @@ def count_islands(grid):
 
 注意!!!内部定义的函数要改变外部函数的变量值，使用==iterable==或==outter.varname==或==nonlocal==关键字!!! (见笔记python内部函数)
 
-<img src="./typora-user-images/image-20230518225737565.png"/>
+<img src="/_posts/typora-user-images/image-20230518225737565.png"/>
 
 ~~~python
 def island_perimeter(grid):
@@ -194,9 +194,9 @@ def max_islands_area(grid):
 
 ## 827.最大人工岛(困难)
 
-<img src="./typora-user-images/image-20230518225937920.png"/>
+<img src="/_posts/typora-user-images/image-20230518225937920.png"/>
 
-<img src="./typora-user-images/image-20230518230009519.png"/>
+<img src="/_posts/typora-user-images/image-20230518230009519.png"/>
 
 ~~~python
 def max_artificial_island(grid):
@@ -262,7 +262,7 @@ $\color{red}{\text{注意没有海洋的情况！！！}}$
 
 剑指Offer II 112.最长递增路径（困难）
 
-<img src="./typora-user-images/image-20230610132916890.png" alt="image-20230610132916890" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230610132916890.png" alt="image-20230610132916890" style="zoom:50%;" />
 
 朴素的深度优先搜索会导致超时。
 

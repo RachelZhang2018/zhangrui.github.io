@@ -14,7 +14,7 @@ https://segmentfault.com/a/1190000025178927
 
 ## 467.环绕字符串中唯一的子字符串
 
-<img src="./typora-user-images/image-20230527232458585.png"/>
+<img src="/_posts/typora-user-images/image-20230527232458585.png"/>
 
 重点在于pre，用于记录当前end下，满足条件的子串个数，它是递增的，它的初始值为1。
 
@@ -121,7 +121,7 @@ $$
 
 在每一步中，查找之前有没有出现key为 $pre[i]-k$ 的前缀和，有几个就证明此处新增了几个子数组。
 
-<img src="./typora-user-images/image-20230527223918301.png"/>
+<img src="/_posts/typora-user-images/image-20230527223918301.png"/>
 
 比如此处，$i=5$，$pre[5]=pre[4]+nums[5]=13+1=14$，
 

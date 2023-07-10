@@ -89,7 +89,7 @@ def delete_node(root, value):
 
 
 
-<img src="./typora-user-images/删除二叉树.jpg" alt="删除二叉树"  />
+<img src="/_posts/typora-user-images/删除二叉树.jpg" alt="删除二叉树"  />
 
 # 树的遍历
 
@@ -194,7 +194,7 @@ class Solution:
 
 answer需要==nonlocal==关键字。
 
-<img src="./typora-user-images/image-20230611232648482.png" alt="image-20230611232648482" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230611232648482.png" alt="image-20230611232648482" style="zoom:50%;" />
 
 输入：root = [3,5,1,6,2,0,8,null,null,7,4], p = 2, q = 0
 

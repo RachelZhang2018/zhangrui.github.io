@@ -8,13 +8,13 @@ title: "Leetcode-正则表达式匹配"
 
 # 题目描述
 
-<img src="./typora-user-images/image-20230311121831401.png"/>
+<img src="/_posts/typora-user-images/image-20230311121831401.png"/>
 
 # 分析
 
 从右往左扫描更合理：
 
-<img src="./typora-user-images/image-20230311121933196.png"/>
+<img src="/_posts/typora-user-images/image-20230311121933196.png"/>
 
 分情况处理：
 

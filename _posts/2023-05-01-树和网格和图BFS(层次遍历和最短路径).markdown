@@ -16,7 +16,7 @@ BFS遍历使用队列。
 
 https://leetcode.cn/problems/binary-tree-level-order-traversal/
 
-<img src="./typora-user-images/image-20230521163506689.png"/>
+<img src="/_posts/typora-user-images/image-20230521163506689.png"/>
 
 直接用BFS遍历，最后会得到一个一维数组，而我们的目的是要区分每一层的节点。
 
@@ -63,7 +63,7 @@ len(deque) = len(mylist)
 
 ## 网格的==不带权==最短路径
 
-<img src="./typora-user-images/image-20230521165214442.png" alt="image-20230521165214442" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230521165214442.png" alt="image-20230521165214442" style="zoom:50%;" />
 
 ### 1162.离开陆地的最大距离
 
@@ -71,11 +71,11 @@ https://leetcode.cn/problems/as-far-from-land-as-possible/
 
 此处的距离指曼哈顿距离(Manhattan Distance)：`(x0, y0)` 和 `(x1, y1)` 这两个单元格之间的距离是 `|x0 - x1| + |y0 - y1|` 。
 
-<img src="./typora-user-images/image-20230521165608709.png" alt="image-20230521165608709" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230521165608709.png" alt="image-20230521165608709" style="zoom:50%;" />
 
 距离源点`(2,2)`的层次遍历。输出：4。
 
-<img src="./typora-user-images/image-20230521165824290.png" alt="image-20230521165824290" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230521165824290.png" alt="image-20230521165824290" style="zoom:50%;" />
 
 ==多源BFS==：把几个起点放入队列同时进行遍历。
 
@@ -143,7 +143,7 @@ class Solution:
 
 树的 高度 是指根节点和叶子节点之间最长向下路径上边的数量。
 
-<img src="./typora-user-images/image-20230521224752749.png"/>
+<img src="/_posts/typora-user-images/image-20230521224752749.png"/>
 
 图的存储：邻接矩阵
 
@@ -198,7 +198,7 @@ class Solution:
 
 我们只能==将度为1的节点加入队列==。所以每次pop之后，需要将邻接节点的度减1。
 
-<img src="./typora-user-images/image-20230521235929010.png"/>
+<img src="/_posts/typora-user-images/image-20230521235929010.png"/>
 
 另外，==用邻接矩阵存图会超时==。此处给每个节点存了个邻接节点的list。
 

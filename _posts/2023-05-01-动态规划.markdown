@@ -97,7 +97,7 @@ class Solution:
 
    $dp[i] = dp[i-1] + 2 + dp[i-dp[i-1]-2]$
 
-<img src="./typora-user-images/image-20230530233745010.png" alt="image-20230530233745010" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230530233745010.png" alt="image-20230530233745010" style="zoom:50%;" />
 
 ~~~python
 class Solution:
@@ -215,11 +215,11 @@ $N=2, M=14$
 
 1. 鸡蛋A的尝试楼层：10, 20, 30, ..., 100；鸡蛋B的尝试楼层：最多9次（A的取值间隔），那么最坏的情况下尝试 $10+9=19$ 次，$M=19$。
 
-<img src="./typora-user-images/DP1.png"/>
+<img src="/_posts/typora-user-images/DP1.png"/>
 
 2. 上面方法不是最优的，因为尝试次数在比较大的一个区间变动，考虑A的尝试楼层设置为不均匀的区间，随着A尝试次数的增加，B的尝试次数随之减少。假设A第一次在 $n$ 层尝试，之后递减 $1$。
    
-   <img src="./typora-user-images/DP2.png"/>
+   <img src="/_posts/typora-user-images/DP2.png"/>
    
    $$
    1+2+...+(n-2)+(n-1)+n =\frac{n(n-1)}{2} \ge 100\\

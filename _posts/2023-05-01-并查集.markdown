@@ -66,13 +66,7 @@ rank = [1, 1, 1, 1, 1]
 
 由于每个集合的树的高度越矮，查询越快，所以可以利用缓存将查找路径上的每个节点缀到根节点下面。
 
-![dsu_path_compression](/_posts/typora-user-images/dsu_path_compression.png)
-
-![dsu_path_compression](/assets/images/dsu_path_compression.png)
-
 <img src="/_posts/typora-user-images/dsu_path_compression.png"/>
-
-<img src="/assets/images/dsu_path_compression.png"/>
 
 ~~~python
 def find(i):
@@ -107,7 +101,7 @@ def find(i):
 
 ## 图解
 
- <img src="typora-user-images/image-20230525002907992.jpg" alt="image-20230525002907992" style="zoom:30%;" />
+ <img src="/_posts/typora-user-images/image-20230525002907992.jpg" alt="image-20230525002907992" style="zoom:30%;" />
 
 ~~~python
 # Python3 program to implement Disjoint Set Data

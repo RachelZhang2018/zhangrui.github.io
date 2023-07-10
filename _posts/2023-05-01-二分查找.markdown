@@ -101,15 +101,15 @@ class Solution:
 
 $nums[pivot]<nums[high]$ 找左侧
 
-<img src="./typora-user-images/rotated_sorted_array_1.png"/>
+<img src="/_posts/typora-user-images/rotated_sorted_array_1.png"/>
 
 $nums[pivot]>nums[high]$ 找右侧
 
-<img src="./typora-user-images/rotated_sorted_array_2.png"/>
+<img src="/_posts/typora-user-images/rotated_sorted_array_2.png"/>
 
 $nums[pivot]==nums[high]$ 缩小区间
 
-<img src="./typora-user-images/rotated_sorted_array_3.png"/>
+<img src="/_posts/typora-user-images/rotated_sorted_array_3.png"/>
 
 ~~~python
 class Solution:
@@ -170,7 +170,7 @@ class Solution:
 
 ## 410.分割数组的最大值(困难)
 
-<img src="./typora-user-images/image-20230605175417380.png" alt="image-20230605175417380" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230605175417380.png" alt="image-20230605175417380" style="zoom:50%;" />
 
 「使……最大值尽可能小」是二分搜索题目常见的问法。
 

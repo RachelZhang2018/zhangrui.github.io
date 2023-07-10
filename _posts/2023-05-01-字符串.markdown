@@ -8,9 +8,9 @@ title: "Leetcode-字符串"
 
 # 1419.数青蛙
 
-<img src="./typora-user-images/image-20230506223223518.png" alt="image-20230506223223518" style="zoom:50%;" />
+<img src="/_posts/typora-user-images/image-20230506223223518.png" alt="image-20230506223223518" style="zoom:50%;" />
 
-<img src="./typora-user-images/minFrogNumber.jpeg"/>
+<img src="/_posts/typora-user-images/minFrogNumber.jpeg"/>
 
 保存一个5个计数器，每次递增当前字母的计数，递减上个字母的计数。
 
@@ -54,7 +54,7 @@ class Solution:
 
 解释：最长有效括号序列是"(())"
 
-<img src="./typora-user-images/image-20230531002104468.png"/>
+<img src="/_posts/typora-user-images/image-20230531002104468.png"/>
 
 从左往右遍历时，重点是==当right>left时，我们将二者同时变为0==。
 
@@ -262,7 +262,7 @@ class Solution:
 
 在原字符串 $s$ 的每两个字符之间以及头尾加上标志字符'#'，再在头尾加上不同的标志字符'^'和'$'作为循环结束的条件。这样重构以后的字符串的长度一定是奇数。
 
-<img src="./typora-user-images/v2-d570f7a9e732d577d556b0e6cff1d263_720w.jpg"/>
+<img src="/_posts/typora-user-images/v2-d570f7a9e732d577d556b0e6cff1d263_720w.jpg"/>
 
 重构以后的字符串 $s'$ 有一个规律，以一个字符为中心扩展的最大回文串的半径就是原字符串 $s$ 中回文串的长度。例如 $P[6]=5$，是字符串 $s'$ 中的"#c#b#c#b#c#"，对应原字符串 $s$ 的"cbcbc"，长度为 $5$。
 
